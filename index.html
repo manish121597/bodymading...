@@ -8,89 +8,74 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #111;
-      color: #eee;
+      background-color: #111;
+      color: #fff;
       display: flex;
     }
-    /* Sidebar */
     .sidebar {
       width: 250px;
       background: #000;
-      color: #f33;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      padding: 20px;
     }
     .sidebar h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
-      color: #f33;
-    }
-    .sidebar p {
-      font-size: 12px;
-      color: #aaa;
-      margin-bottom: 20px;
+      color: red;
     }
     .sidebar button {
-      margin: 5px 0;
-      padding: 12px;
-      border: none;
+      margin: 10px 0;
+      padding: 10px;
       background: #111;
-      color: #eee;
+      border: 1px solid red;
+      color: white;
       cursor: pointer;
       border-radius: 8px;
-      font-size: 16px;
-      text-align: left;
     }
-    .sidebar button.active {
-      border: 2px solid #f33;
+    .sidebar button:hover {
+      background: red;
     }
-
-    /* Main Content */
-    .main {
+    .content {
       flex: 1;
       padding: 20px;
       overflow-y: auto;
     }
-
     .section {
       display: none;
     }
     .section.active {
       display: block;
     }
-
-    /* Cards */
     .card {
-      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 12px;
       padding: 15px;
-      border-radius: 10px;
       margin: 10px 0;
-    }
-    .card h3 {
-      color: #f33;
-    }
-
-    /* Music Player */
-    .music-player {
       background: #1a1a1a;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-    }
-    .music-controls button {
-      margin: 5px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      background: #f33;
-      color: white;
     }
     iframe {
       width: 100%;
-      height: 250px;
-      border-radius: 10px;
+      height: 300px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    audio {
+      width: 100%;
+      margin-top: 10px;
+    }
+    .music-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    .music-controls button {
+      flex: 1;
+      margin: 0 5px;
+      background: red;
+      border: none;
+      padding: 10px;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -98,126 +83,111 @@
   <div class="sidebar">
     <h1>Baki Fitness</h1>
     <p>Built for Manish • Teen-safe hypertrophy</p>
-    <button class="tab active" data-target="diet">Diet Plan</button>
-    <button class="tab" data-target="workout">Workout Plan</button>
-    <button class="tab" data-target="music">Music</button>
-    <button class="tab" data-target="tutorials">Tutorials</button>
+    <button onclick="showSection('diet')">Diet Plan</button>
+    <button onclick="showSection('workout')">Workout Plan</button>
+    <button onclick="showSection('music')">Music</button>
+    <button onclick="showSection('tutorials')">Tutorials</button>
   </div>
 
-  <div class="main">
+  <div class="content">
     <!-- Diet Plan -->
     <div id="diet" class="section active">
       <h2>Diet Plan</h2>
-      <div class="card">
-        <h3>Pre-Workout (4:50–5:00 am)</h3>
-        <ul>
-          <li>EAA – 1 scoop (water)</li>
-          <li>1 banana or 2 dates</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Post-Workout (6:30 am)</h3>
-        <ul>
-          <li>Whey – 1 scoop + Creatine 3–5 g</li>
-          <li>Fast carbs: banana / papaya / watermelon</li>
-          <li>5 soaked almonds</li>
-        </ul>
-      </div>
+      <div class="card"><b>Pre-Workout (4:50–5:00 am)</b><br>EAA – 1 scoop, 1 banana or 2 dates</div>
+      <div class="card"><b>Post-Workout (6:30 am)</b><br>Whey 1 scoop + Creatine, banana/papaya/watermelon, 5 soaked almonds</div>
+      <div class="card"><b>Breakfast (7:30–8:00 am)</b><br>Oats + milk + peanut butter, Paneer/eggs, Multivitamin + Fish oil</div>
+      <div class="card"><b>Lunch (12–1 pm)</b><br>Roti/Rice + Dal + Sabzi + Paneer/Soya/Chana (~30g protein) + Salad</div>
+      <div class="card"><b>Evening Snack (4–5 pm)</b><br>Peanut butter sandwich OR Sprouted moong/roasted chana</div>
+      <div class="card"><b>Dinner (8–9 pm)</b><br>Roti/Rice + Paneer/Soya/Dal + Sabzi + Salad</div>
     </div>
 
     <!-- Workout Plan -->
     <div id="workout" class="section">
       <h2>Workout Plan</h2>
-      <div class="card">
-        <h3>Monday – Chest + Triceps</h3>
-        <ul>
-          <li>Bench Press 4x6–8</li>
-          <li>Pec Deck 3x12–15</li>
-          <li>Bar Dips 3xFailure</li>
-          <li>Triceps Pushdown 3x10–12</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Tuesday – Back + Biceps</h3>
-        <ul>
-          <li>Lat Pulldown 3x10–12</li>
-          <li>Barbell Row 3x8–10</li>
-          <li>Seated Cable Row 3x12–15</li>
-          <li>Face Pulls 3x15</li>
-        </ul>
-      </div>
+      <div class="card"><b>Day 1 – Chest & Triceps</b><br>Bench Press, Pec Deck, Dips, Triceps Pushdown, Overhead Triceps Extension</div>
+      <div class="card"><b>Day 2 – Back & Biceps</b><br>Pullups, Lat Pulldown, Barbell Row, Seated Cable Row, Face Pulls, Preacher Curl</div>
+      <div class="card"><b>Day 3 – Legs</b><br>Back Squat, Walking Lunges, Leg Extension, Romanian Deadlift, Hip Thrusts, Bulgarian Split Squat</div>
+      <div class="card"><b>Day 4 – Shoulders</b><br>Overhead Press, Dumbbell Lateral Raises, Arnold Press, Rear Delt Fly, Shrugs</div>
+      <div class="card"><b>Day 5 – Core</b><br>Plank, Hanging Leg Raise, Cable Crunch, Russian Twists</div>
     </div>
 
     <!-- Music -->
     <div id="music" class="section">
-      <h2>Music Player</h2>
-      <div class="music-player">
-        <p id="song-title">Now Playing: </p>
-        <audio id="audio" controls></audio>
-        <div class="music-controls">
-          <button onclick="prevSong()">⏮ Prev</button>
-          <button onclick="nextSong()">⏭ Next</button>
-        </div>
+      <h2>Music</h2>
+      <p id="song-title">Now Playing: Badmashi</p>
+      <audio id="audio-player" controls>
+        <source src="music/track1.mp3" type="audio/mpeg">
+      </audio>
+      <div class="music-controls">
+        <button onclick="prevSong()">⏮ Prev</button>
+        <button onclick="nextSong()">⏭ Next</button>
       </div>
     </div>
 
     <!-- Tutorials -->
     <div id="tutorials" class="section">
-      <h2>Exercise Tutorials</h2>
-      <div class="card">
-        <h3>Pec Deck</h3>
-        <iframe src="https://www.youtube.com/embed/xYNONVD-VCA?si=gug3h5vcnO7ceaIW"></iframe>
-      </div>
-      <div class="card">
-        <h3>Bar Dips</h3>
-        <iframe src="https://www.youtube.com/embed/1_4OICx2WrY"></iframe>
-      </div>
-      <div class="card">
-        <h3>Triceps Pushdown</h3>
-        <iframe src="https://www.youtube.com/embed/Rc7-euA8FDI"></iframe>
-      </div>
+      <h2>Tutorials</h2>
+      <div class="card"><iframe src="https://www.youtube.com/embed/xYNONVD-VCA"></iframe><b>Pec Deck</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/1_4OICx2WrY"></iframe><b>Bar Dips</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/Rc7-euA8FDI"></iframe><b>Triceps Pushdown</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/9Ark9S11uXw"></iframe><b>Overhead Triceps Extension</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/XQc0WHO90Lk"></iframe><b>Hanging Leg Raise</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/z-lxcsIN4T4"></iframe><b>Lat Pulldown</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/phVtqawIgbk"></iframe><b>Barbell Row</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/qD1WZ5pSuvk"></iframe><b>Seated Cable Row</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/IeOqdw9WI90"></iframe><b>Face Pulls</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/xe2MXatLTUw"></iframe><b>Plank</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/Ak1iHbEeeY8"></iframe><b>Back Squat</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/tQNktxPkSeE"></iframe><b>Walking Lunges</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/d3d2yz7V26c"></iframe><b>Leg Extension</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/K2m0jj6RfYg"></iframe><b>Cable Crunch</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/k6tzKisR3NY"></iframe><b>Overhead Press</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/Kl3LEzQ5Zqs"></iframe><b>Dumbbell Lateral Raises</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/7X8ziWLB06s"></iframe><b>Arnold Press</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/Y59M5fXn8bs"></iframe><b>Rear Delt Fly</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/rFsSeClGnNA"></iframe><b>Shrugs</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/aRUMRbl7KS4"></iframe><b>Russian Twists</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/-avLxYko1k0"></iframe><b>Chest Supported Row</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/LUBgyjKCRWQ"></iframe><b>Preacher Curl</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/Wou9zVQrAfs"></iframe><b>Romanian Deadlift</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/96uDbymTaHM"></iframe><b>Hip Thrusts</b></div>
+      <div class="card"><iframe src="https://www.youtube.com/embed/or1frhkjBDc"></iframe><b>Bulgarian Split Squat</b></div>
     </div>
   </div>
 
   <script>
-    // Sidebar navigation
-    const tabs = document.querySelectorAll('.tab');
-    const sections = document.querySelectorAll('.section');
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(btn => btn.classList.remove('active'));
-        tab.classList.add('active');
-        sections.forEach(sec => sec.classList.remove('active'));
-        document.getElementById(tab.dataset.target).classList.add('active');
-      });
-    });
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
 
-    // Music Player
+    // Music player
     const songs = [
-      {title: "Badmashi", file: "music/track1.mp3"},
-      {title: "Jaat Flow", file: "music/track2.mp3"},
-      {title: "Neffex Go", file: "music/track3.mp3"},
-      {title: "I Guess", file: "music/track4.mp3"},
-      {title: "Phonks", file: "music/track5.mp3"}
+      {title: "Badmashi", src: "music/track1.mp3"},
+      {title: "Jaat Flow", src: "music/track2.mp3"},
+      {title: "Neffex Go", src: "music/track3.mp3"},
+      {title: "I Guess", src: "music/track4.mp3"},
+      {title: "Phonks", src: "music/track5.mp3"}
     ];
     let currentSong = 0;
-    const audio = document.getElementById("audio");
+    const audio = document.getElementById("audio-player");
     const songTitle = document.getElementById("song-title");
 
     function loadSong(index) {
-      audio.src = songs[index].file;
+      audio.src = songs[index].src;
       songTitle.innerText = "Now Playing: " + songs[index].title;
       audio.play();
     }
+
     function nextSong() {
       currentSong = (currentSong + 1) % songs.length;
       loadSong(currentSong);
     }
+
     function prevSong() {
       currentSong = (currentSong - 1 + songs.length) % songs.length;
       loadSong(currentSong);
     }
-    loadSong(currentSong);
   </script>
 </body>
 </html>
