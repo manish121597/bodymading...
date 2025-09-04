@@ -1,388 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Baki Fitness – Manish</title>
-<meta name="theme-color" content="#0b0b0b" />
-<style>
-  :root{
-    --bg:#0b0b0b; --panel:#121212; --panel2:#0f0f0f;
-    --text:#e9e9e9; --muted:#b9b9b9;
-    --line:#1f1f1f; --accent:#e50914; --accent2:#b40610; --ok:#18c964;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0; background:#0b0b0b; color:var(--text); font-family:Inter,Segoe UI,Roboto,Arial,sans-serif; display:flex}
-  /* sidebar */
-  .side{width:260px; min-width:240px; background:linear-gradient(180deg,#111,#0c0c0c); border-right:1px solid var(--line); padding:22px 16px; position:sticky; top:0; height:100vh}
-  .brand{font-size:28px; font-weight:800; color:var(--accent); margin-bottom:6px}
-  .tag{font-size:12px; color:var(--muted); margin-bottom:18px}
-  .nav a{display:block; padding:12px 14px; margin:8px 0; text-decoration:none; color:#fff; background:#151515; border:1px solid #202020; border-radius:10px; font-weight:700; transition:.15s}
-  .nav a:hover{transform:translateX(4px); background:#171717}
-  .nav a.active{outline:2px solid var(--accent); background:#151112}
-  .badge{display:inline-block; font-size:11px; padding:2px 8px; border:1px solid #242424; border-radius:999px; color:var(--muted)}
-  /* main */
-  main{flex:1; min-width:0; padding:26px 22px 120px}
-  section{display:none}
-  section.active{display:block}
-  .panel{background:linear-gradient(180deg,#131313,#0f0f0f); border:1px solid #1d1d1d; border-radius:16px; padding:20px; margin-bottom:18px}
-  h1{margin:0 0 14px; color:var(--accent); font-size:26px}
-  h2{margin:14px 0 10px; color:#ff4a57; font-size:20px}
-  h3{margin:10px 0; color:#ff616b; font-size:18px}
-  .grid{display:grid; gap:14px}
-  .two{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .three{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .card{padding:14px; border:1px solid #242424; background:#121212; border-radius:12px}
-  ul.clean{margin:6px 0 8px 18px}
-  .pill{padding:8px 12px; border:1px solid #242424; border-radius:999px; background:#141414; color:#cfcfcf; font-size:13px; display:inline-block; margin-right:8px}
-  .small{color:var(--muted); font-size:13px}
-  .day{border-left:3px solid #262626; padding-left:12px}
-  .yt{width:100%; aspect-ratio:16/9; border:0; border-radius:12px; background:#000}
-  /* music bar */
-  .musicbar{position:fixed; left:260px; right:0; bottom:0; z-index:50; background:#0e0e0e; border-top:1px solid var(--line); padding:10px 14px; display:flex; gap:10px; align-items:center}
-  .musicbar .dot{width:10px; height:10px; border-radius:50%; background:#444}
-  .musicbar.playing .dot{background:var(--ok); box-shadow:0 0 8px var(--ok)}
-  .btn{background:var(--accent); border:none; color:#fff; padding:9px 12px; border-radius:10px; font-weight:800; cursor:pointer}
-  .btn.secondary{background:#191919; border:1px solid #2a2a2a; color:#ddd}
-  .btn.ghost{background:#151515; border:1px solid #2a2a2a; color:#eee}
-  .tracks{font-size:13px; color:#cfcfcf}
-  .tracks b{color:#fff}
-  /* search box */
-  .search{display:flex; gap:10px; align-items:center; margin-bottom:12px}
-  .search input{flex:1; padding:10px 12px; border-radius:10px; border:1px solid #2a2a2a; background:#121212; color:#eee; outline:none}
-  .search small{color:var(--muted)}
-  /* mobile */
-  @media (max-width:980px){
-    .side{position:fixed; transform:translateX(-100%); transition:.2s; z-index:60}
-    .side.open{transform:none}
-    .menuBtn{position:fixed; top:12px; left:12px; z-index:70}
-    .musicbar{left:0}
-    .two,.three{grid-template-columns:1fr}
-    main{padding-top:56px}
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gym Buddy</title>
+  <style>
+    body { margin:0; font-family: Arial, sans-serif; background:#111; color:#fff; }
+    .sidebar {
+      position: fixed; left:0; top:0; bottom:0; width:220px; background:#222; padding:20px;
+    }
+    .sidebar h2 { color:#0f0; }
+    .sidebar a { display:block; margin:10px 0; color:#ccc; text-decoration:none; }
+    .sidebar a:hover { color:#0f0; }
+    .content { margin-left:240px; padding:20px; }
+    section { display:none; }
+    section.active { display:block; }
+    h1,h2,h3 { color:#0f0; }
+    .music-player { margin-top:20px; }
+    .music-controls button { margin:5px; }
+    iframe { width:100%; height:315px; margin:10px 0; border:0; }
+    .search-bar input { padding:8px; width:80%; }
+    .exercise { margin-bottom:20px; }
+  </style>
 </head>
 <body>
 
-<aside class="side" id="sidebar">
-  <div class="brand">Baki Fitness</div>
-  <div class="tag">Built for Manish • Teen-safe hypertrophy</div>
-  <nav class="nav">
-    <a href="#diet" data-tab class="active">Diet Plan</a>
-    <a href="#workout" data-tab>Workout Plan</a>
-    <a href="#music" data-tab>Music</a>
-    <a href="#tutorials" data-tab>Tutorials</a>
-  </nav>
-  <div style="margin-top:16px"><span class="badge">Goal: Lean-Muscular • 16y</span></div>
-</aside>
+<div class="sidebar">
+  <h2>Gym Buddy</h2>
+  <a href="#" onclick="showSection('diet')">Diet Plan</a>
+  <a href="#" onclick="showSection('workout')">Workout Plan</a>
+  <a href="#" onclick="showSection('music')">Music</a>
+  <a href="#" onclick="showSection('tutorials')">Tutorials</a>
+</div>
 
-<button class="btn menuBtn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
-
-<main>
-  <!-- Diet -->
+<div class="content">
+  <!-- Diet Section -->
   <section id="diet" class="active">
-    <div class="panel">
-      <h1>Diet Plan</h1>
-      <div>
-        <span class="pill">Protein target: <b>1.6–2 g/kg</b></span>
-        <span class="pill">Water: <b>3–4 L/day</b></span>
-        <span class="pill">Sleep: <b>7–8 hrs</b></span>
-      </div>
-    </div>
-
-    <div class="grid two">
-      <div class="card">
-        <h3>Pre-Workout (4:50–5:00 am)</h3>
-        <ul class="clean">
-          <li>EAA – 1 scoop (water)</li>
-          <li>1 banana <span class="small">or</span> 2 dates</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Post-Workout (6:30 am)</h3>
-        <ul class="clean">
-          <li>Whey – 1 scoop + Creatine 3–5 g</li>
-          <li>Fast carbs: banana / papaya / watermelon</li>
-          <li>5 soaked almonds</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Breakfast (7:30–8:00 am)</h3>
-        <ul class="clean">
-          <li>Oats (40–50 g) + milk + 1 tbsp peanut butter</li>
-          <li>Paneer (50–80 g) <span class="small">or</span> 2 boiled eggs</li>
-          <li>Multivitamin + Fish oil</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Lunch (12–1 pm)</h3>
-        <ul class="clean">
-          <li>Roti (2–3) <span class="small">or</span> Rice (150–200 g cooked)</li>
-          <li>Dal + Sabzi</li>
-          <li>Protein: Paneer / Soya / Chana (~30 g)</li>
-          <li>Salad</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Evening Snack (4–5 pm)</h3>
-        <ul class="clean">
-          <li>Peanut butter sandwich <span class="small">(2 bread + 1 tbsp)</span></li>
-          <li>or Sprouted moong / Roasted chana</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Dinner (8–9 pm)</h3>
-        <ul class="clean">
-          <li>Roti/Rice + Paneer/Soya/Dal + Sabzi</li>
-          <li>Salad</li>
-        </ul>
-        <h3 style="margin-top:10px">Before Bed (10–10:30 pm)</h3>
-        <ul class="clean">
-          <li>Warm milk (200 ml) + 2 soaked almonds</li>
-          <li class="small">Optional: 50 g paneer (extra protein)</li>
-        </ul>
-      </div>
-    </div>
+    <h1>Diet Plan</h1>
+    <p>💊 Supplements: EAA (pre-workout), Whey+Creatine (post-workout), Fish Oil+Multivitamin (breakfast).<br>
+    🥛 Protein: Paneer, Soya, Peanut Butter, Oats spread daily.<br>
+    💧 Hydration: 3–4L water daily.<br>
+    😴 Sleep: 7–8 hours minimum.</p>
   </section>
 
-  <!-- Workout -->
+  <!-- Workout Section -->
   <section id="workout">
-    <div class="panel">
-      <h1>Workout Plan (6-Day, Baki-style)</h1>
-      <p class="small">Compounds 6–10 reps • Isolation 10–15 reps • Core 15–20 reps • Progressive overload + perfect form.</p>
-    </div>
-
-    <!-- MON -->
-    <div class="panel">
-      <h2>MON – Chest + Triceps (Push)</h2>
-      <div class="day">
-        <ul class="clean">
-          <li>Push-ups (warm-up) — <b>3×20–30</b></li>
-          <li>Flat Bench Press — <b>4×6–8</b></li>
-          <li>Incline Dumbbell Press — <b>3×8–10</b></li>
-          <li>Pec Deck / Cable Fly — <b>3×12–15</b></li>
-          <li>Bar Dips — <b>3×failure</b></li>
-          <li>Triceps Pushdown — <b>3×10–12</b></li>
-          <li>Overhead Triceps Extension — <b>3×10–12</b></li>
-          <li><b>Abs:</b> Hanging Leg Raise — <b>3×15</b></li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- TUE -->
-    <div class="panel">
-      <h2>TUE – Back + Biceps (Pull)</h2>
-      <div class="day">
-        <ul class="clean">
-          <li>Pull-ups — <b>4×max</b></li>
-          <li>Lat Pulldown — <b>3×10–12</b></li>
-          <li>Barbell Row — <b>3×8–10</b></li>
-          <li>Seated Cable Row — <b>3×12</b></li>
-          <li>Dumbbell Curl — <b>3×10–12</b></li>
-          <li>Hammer Curl — <b>3×10–12</b></li>
-          <li>Face Pulls — <b>3×12–15</b></li>
-          <li><b>Abs:</b> Plank — <b>3×60s</b></li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- WED -->
-    <div class="panel">
-      <h2>WED – Legs (Quads focus)</h2>
-      <div class="day">
-        <ul class="clean">
-          <li>Back Squat — <b>4×6–8</b></li>
-          <li>Leg Press — <b>3×10–12</b></li>
-          <li>Walking Lunges — <b>3×12/leg</b></li>
-          <li>Leg Extension — <b>3×12–15</b></li>
-          <li>Standing Calf Raises — <b>4×15–20</b></li>
-          <li><b>Abs:</b> Cable Crunch — <b>3×15</b></li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- THU -->
-    <div class="panel">
-      <h2>THU – Shoulders + Traps</h2>
-      <div class="day">
-        <ul class="clean">
-          <li>Overhead Press (BB/DB) — <b>4×8–10</b></li>
-          <li>Dumbbell Lateral Raises — <b>3×12–15</b></li>
-          <li>Arnold Press — <b>3×10–12</b></li>
-          <li>Rear Delt Fly — <b>3×12–15</b></li>
-          <li>Shrugs — <b>3×12–15</b></li>
-          <li><b>Abs:</b> Russian Twists — <b>3×20</b></li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- FRI -->
-    <div class="panel">
-      <h2>FRI – Back + Arms (Strength)</h2>
-      <div class="day">
-        <ul class="clean">
-          <li>Deadlift — <b>4×5–6</b></li>
-          <li>Chest Supported Row — <b>3×8–10</b></li>
-          <li>Wide Grip Pulldown — <b>3×10–12</b></li>
-          <li>Rear Delt Fly — <b>3×12</b></li>
-          <li>Preacher Curl — <b>3×10–12</b></li>
-          <li>Reverse Curl — <b>3×10–12</b></li>
-          <li><b>Abs:</b> Hanging Knee Raise — <b>3×15</b></li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- SAT -->
-    <div class="panel">
-      <h2>SAT – Hamstrings + Glutes</h2>
-      <div class="day">
-        <ul class="clean">
-          <li>Romanian Deadlift — <b>4×8–10</b></li>
-          <li>Leg Curl (Machine) — <b>4×10–12</b></li>
-          <li>Hip Thrusts — <b>4×10–12</b></li>
-          <li>Bulgarian Split Squat — <b>3×12/leg</b></li>
-          <li>Seated Calf Raises — <b>4×15–20</b></li>
-          <li><b>Abs:</b> Plank variations — <b>3×30s</b></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="panel small"><b>Sun:</b> Rest / Active Recovery — walk, stretch, mobility, foam roll (optional 20–30 min easy cardio)</div>
+    <h1>6-Day Workout Split</h1>
+    <h3>MON – Chest + Triceps</h3>
+    <ul>
+      <li>Push-ups: 3×20–30</li>
+      <li>Flat Bench Press: 4×6–8</li>
+      <li>Incline Dumbbell Press: 3×8–10</li>
+      <li>Pec Deck: 3×12–15</li>
+      <li>Bar Dips: 3×failure</li>
+      <li>Triceps Pushdown: 3×10–12</li>
+      <li>Overhead Triceps Extension: 3×10–12</li>
+      <li>ABS: Hanging Leg Raise 3×15</li>
+    </ul>
+    <h3>TUE – Back + Biceps</h3>
+    <ul>
+      <li>Pull-ups: 4×max</li>
+      <li>Lat Pulldown: 3×10–12</li>
+      <li>Barbell Row: 3×8–10</li>
+      <li>Seated Cable Row: 3×12</li>
+      <li>Dumbbell Bicep Curl: 3×10–12</li>
+      <li>Hammer Curl: 3×10–12</li>
+      <li>Face Pulls: 3×12–15</li>
+      <li>ABS: Plank Hold 3×60s</li>
+    </ul>
+    <h3>WED – Legs</h3>
+    <ul>
+      <li>Squats: 4×6–8</li>
+      <li>Leg Press: 3×10–12</li>
+      <li>Walking Lunges: 3×12 each leg</li>
+      <li>Leg Extension: 3×12–15</li>
+      <li>Standing Calf Raises: 4×15–20</li>
+      <li>ABS: Cable Crunch 3×15</li>
+    </ul>
+    <h3>THU – Shoulders + Traps</h3>
+    <ul>
+      <li>Overhead Press: 4×8–10</li>
+      <li>Dumbbell Lateral Raises: 3×12–15</li>
+      <li>Arnold Press: 3×10–12</li>
+      <li>Rear Delt Fly: 3×12–15</li>
+      <li>Shrugs: 3×12–15</li>
+      <li>ABS: Russian Twists 3×20</li>
+    </ul>
+    <h3>FRI – Back + Arms</h3>
+    <ul>
+      <li>Deadlift: 4×5–6</li>
+      <li>Chest Supported Row: 3×8–10</li>
+      <li>Wide Grip Pulldown: 3×10–12</li>
+      <li>Rear Delt Fly: 3×12</li>
+      <li>Preacher Curl: 3×10–12</li>
+      <li>Reverse Curl: 3×10–12</li>
+      <li>ABS: Hanging Knee Raise 3×15</li>
+    </ul>
+    <h3>SAT – Hamstrings + Glutes</h3>
+    <ul>
+      <li>Romanian Deadlift: 4×8–10</li>
+      <li>Leg Curl: 4×10–12</li>
+      <li>Hip Thrusts: 4×10–12</li>
+      <li>Bulgarian Split Squat: 3×12 each leg</li>
+      <li>Seated Calf Raises: 4×15–20</li>
+      <li>ABS: Plank Variations 3×30s</li>
+    </ul>
+    <p><b>SUN – Rest / Active Recovery</b></p>
   </section>
 
-  <!-- Music -->
+  <!-- Music Section -->
   <section id="music">
-    <div class="panel">
-      <h1>Music</h1>
-      <p class="small">Upload files as <code>track1.mp3</code> … <code>track5.mp3</code> in this repo. If autoplay is blocked, press Play.</p>
-      <div class="card" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
-        <button id="prevBtn" class="btn ghost">⏮ Prev</button>
-        <button id="playBtn" class="btn">▶️ Play</button>
-        <button id="nextBtn" class="btn ghost">⏭ Next</button>
-        <button id="muteBtn" class="btn secondary">Mute</button>
-        <span id="trackLabel" class="tracks"></span>
-        <audio id="player" preload="auto"></audio>
+    <h1>Music Player</h1>
+    <div class="music-player">
+      <audio id="audio" controls></audio>
+      <div class="music-controls">
+        <button onclick="prevSong()">⏮ Prev</button>
+        <button onclick="nextSong()">⏭ Next</button>
       </div>
+      <p id="songTitle"></p>
     </div>
   </section>
 
-  <!-- Tutorials -->
+  <!-- Tutorials Section -->
   <section id="tutorials">
-    <div class="panel">
-      <h1>Tutorials</h1>
-      <div class="search">
-        <input id="tSearch" type="text" placeholder="Search: e.g., Overhead Triceps Extension, triceps, back, curl..." />
-        <small>Type to filter • Clear to see all</small>
-      </div>
-      <div id="tGrid" class="grid two"></div>
+    <h1>Workout Tutorials</h1>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search exercise..." onkeyup="searchExercise()"/>
     </div>
+    <div id="exerciseList"></div>
   </section>
-</main>
-
-<!-- sticky music status -->
-<div class="musicbar" id="musicbar">
-  <div class="dot"></div>
-  <div id="now">Music: waiting…</div>
 </div>
 
 <script>
-/* --------- Tabs (no cross scroll) --------- */
-const tabLinks=[...document.querySelectorAll('[data-tab]')];
-const sections=[...document.querySelectorAll('main section')];
-function showTab(hash){
-  sections.forEach(s=>s.classList.toggle('active', '#'+s.id===hash));
-  tabLinks.forEach(a=>a.classList.toggle('active', a.getAttribute('href')===hash));
-  history.replaceState(null,'',hash);
-  window.scrollTo({top:0,behavior:'instant'});
-}
-tabLinks.forEach(a=>a.addEventListener('click',e=>{
-  e.preventDefault(); showTab(a.getAttribute('href'));
-}));
-if(location.hash && document.querySelector(location.hash)) showTab(location.hash);
+  function showSection(id){
+    document.querySelectorAll("section").forEach(sec=>sec.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+  }
 
-/* --------- Music Player --------- */
-const files=['track1.mp3','track2.mp3','track3.mp3','track4.mp3','track5.mp3'];
-const titles=['Badmashi','Jaat Flow','NEFFEX – Go','I Guess','Phonks'];
-const audio=document.getElementById('player');
-const bar=document.getElementById('musicbar');
-const now=document.getElementById('now');
-const label=document.getElementById('trackLabel');
-let i=0;
-function load(n){
-  i=(n+files.length)%files.length;
-  audio.src=files[i];
-  label.innerHTML = '<b>Now:</b> '+titles[i]+' <span class="small">( '+(i+1)+'/'+files.length+' )</span>';
-  audio.load();
-}
-function play(){
-  audio.play().then(()=>{
-    bar.classList.add('playing'); now.textContent='Music: playing';
-    document.getElementById('playBtn').textContent='⏸ Pause';
-  }).catch(()=>{});
-}
-function pause(){
-  audio.pause(); bar.classList.remove('playing'); now.textContent='Music: paused';
-  document.getElementById('playBtn').textContent='▶️ Play';
-}
-function next(){ load(i+1); play(); }
-function prev(){ load(i-1); play(); }
-load(0);
-audio.addEventListener('ended', next);
-document.getElementById('playBtn').addEventListener('click',()=> audio.paused?play():pause());
-document.getElementById('nextBtn').addEventListener('click', next);
-document.getElementById('prevBtn').addEventListener('click', prev);
-document.getElementById('muteBtn').addEventListener('click', (e)=>{
-  audio.muted=!audio.muted; e.target.textContent = audio.muted? 'Unmute':'Mute';
-});
-window.addEventListener('load', ()=>{ play(); });
+  // Music
+  const playlist = [
+    {title:"Badmashi", src:"track1.mp3"},
+    {title:"Jaat Flow", src:"track2.mp3"},
+    {title:"Neffex Go", src:"track3.mp3"},
+    {title:"I Guess", src:"track4.mp3"},
+    {title:"Phonks", src:"track5.mp3"}
+  ];
+  let current = 0;
+  const audio = document.getElementById("audio");
+  const title = document.getElementById("songTitle");
+  function loadSong(i){ audio.src=playlist[i].src; title.textContent="Now Playing: "+playlist[i].title; audio.play(); }
+  function nextSong(){ current=(current+1)%playlist.length; loadSong(current); }
+  function prevSong(){ current=(current-1+playlist.length)%playlist.length; loadSong(current); }
+  loadSong(current);
 
-/* --------- Tutorials: searchable list (25) --------- */
-const tutorials=[
-  {title:'Pec Deck', url:'https://www.youtube.com/embed/xYNONVD-VCA?si=gug3h5vcnO7ceaIW'},
-  {title:'Bar Dips', url:'https://www.youtube.com/embed/1_4OICx2WrY'},
-  {title:'Triceps Pushdown', url:'https://www.youtube.com/embed/Rc7-euA8FDI'},
-  {title:'Overhead Triceps Extension', url:'https://www.youtube.com/embed/9Ark9S11uXw'},
-  {title:'Hanging Leg Raise', url:'https://www.youtube.com/embed/XQc0WHO90Lk'},
-  {title:'Lat Pulldown', url:'https://www.youtube.com/embed/z-lxcsIN4T4'},
-  {title:'Barbell Row', url:'https://www.youtube.com/embed/phVtqawIgbk'},
-  {title:'Seated Cable Row', url:'https://www.youtube.com/embed/qD1WZ5pSuvk'},
-  {title:'Face Pulls', url:'https://www.youtube.com/embed/IeOqdw9WI90'},
-  {title:'Plank', url:'https://www.youtube.com/embed/xe2MXatLTUw'},
-  {title:'Back Squat', url:'https://www.youtube.com/embed/Ak1iHbEeeY8'},
-  {title:'Walking Lunges', url:'https://www.youtube.com/embed/tQNktxPkSeE?si=op-IS3f2IR5HM-rK'},
-  {title:'Leg Extension', url:'https://www.youtube.com/embed/d3d2yz7V26c'},
-  {title:'Cable Crunch', url:'https://www.youtube.com/embed/K2m0jj6RfYg'},
-  {title:'Overhead Press', url:'https://www.youtube.com/embed/k6tzKisR3NY'},
-  {title:'Dumbbell Lateral Raises', url:'https://www.youtube.com/embed/Kl3LEzQ5Zqs'},
-  {title:'Arnold Press', url:'https://www.youtube.com/embed/7X8ziWLB06s'},
-  {title:'Rear Delt Fly', url:'https://www.youtube.com/embed/Y59M5fXn8bs?si=sBWcjKWp7T2go44b'},
-  {title:'Shrugs', url:'https://www.youtube.com/embed/rFsSeClGnNA'},
-  {title:'Russian Twists', url:'https://www.youtube.com/embed/aRUMRbl7KS4'},
-  {title:'Chest Supported Row', url:'https://www.youtube.com/embed/-avLxYko1k0'},
-  {title:'Preacher Curl', url:'https://www.youtube.com/embed/LUBgyjKCRWQ'},
-  {title:'Romanian Deadlift', url:'https://www.youtube.com/embed/Wou9zVQrAfs'},
-  {title:'Hip Thrusts', url:'https://www.youtube.com/embed/96uDbymTaHM'},
-  {title:'Bulgarian Split Squat', url:'https://www.youtube.com/embed/or1frhkjBDc'}
-];
-const tGrid=document.getElementById('tGrid');
-function renderTutorials(list){
-  tGrid.innerHTML='';
-  list.forEach(t=>{
-    const wrap=document.createElement('div');
-    wrap.className='card';
-    wrap.innerHTML=`<h3 style="margin:0 0 8px">${t.title}</h3>
-      <iframe class="yt" src="${t.url}&rel=0&mute=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-    tGrid.appendChild(wrap);
-  });
-}
-renderTutorials(tutorials);
-document.getElementById('tSearch').addEventListener('input', (e)=>{
-  const q=e.target.value.trim().toLowerCase();
-  if(!q){ renderTutorials(tutorials); return; }
-  const filtered=tutorials.filter(t=>t.title.toLowerCase().includes(q));
-  renderTutorials(filtered.length?filtered:tutorials);
-});
+  // Tutorials
+  const exercises = [
+    {name:"Pec Deck",link:"https://www.youtube.com/embed/xYNONVD-VCA?si=gug3h5vcnO7ceaIW"},
+    {name:"Bar Dips",link:"https://www.youtube.com/embed/1_4OICx2WrY"},
+    {name:"Triceps Pushdown",link:"https://www.youtube.com/embed/Rc7-euA8FDI"},
+    {name:"Overhead Triceps Extension",link:"https://www.youtube.com/embed/9Ark9S11uXw"},
+    {name:"Hanging Leg Raise",link:"https://www.youtube.com/embed/XQc0WHO90Lk"},
+    {name:"Lat Pulldown",link:"https://www.youtube.com/embed/z-lxcsIN4T4"},
+    {name:"Barbell Row",link:"https://www.youtube.com/embed/phVtqawIgbk"},
+    {name:"Seated Cable Row",link:"https://www.youtube.com/embed/qD1WZ5pSuvk"},
+    {name:"Face Pulls",link:"https://www.youtube.com/embed/IeOqdw9WI90"},
+    {name:"Plank",link:"https://www.youtube.com/embed/xe2MXatLTUw"},
+    {name:"Back Squat",link:"https://www.youtube.com/embed/Ak1iHbEeeY8"},
+    {name:"Walking Lunges",link:"https://www.youtube.com/embed/tQNktxPkSeE?si=op-IS3f2IR5HM-rK"},
+    {name:"Leg Extension",link:"https://www.youtube.com/embed/d3d2yz7V26c"},
+    {name:"Cable Crunch",link:"https://www.youtube.com/embed/K2m0jj6RfYg"},
+    {name:"Overhead Press",link:"https://www.youtube.com/embed/k6tzKisR3NY"},
+    {name:"Dumbbell Lateral Raises",link:"https://www.youtube.com/embed/Kl3LEzQ5Zqs"},
+    {name:"Arnold Press",link:"https://www.youtube.com/embed/7X8ziWLB06s"},
+    {name:"Rear Delt Fly",link:"https://www.youtube.com/embed/Y59M5fXn8bs?si=sBWcjKWp7T2go44b"},
+    {name:"Shrugs",link:"https://www.youtube.com/embed/rFsSeClGnNA"},
+    {name:"Russian Twists",link:"https://www.youtube.com/embed/aRUMRbl7KS4"},
+    {name:"Chest Supported Row",link:"https://www.youtube.com/embed/-avLxYko1k0"},
+    {name:"Preacher Curl",link:"https://www.youtube.com/embed/LUBgyjKCRWQ"},
+    {name:"Romanian Deadlift",link:"https://www.youtube.com/embed/Wou9zVQrAfs"},
+    {name:"Hip Thrusts",link:"https://www.youtube.com/embed/96uDbymTaHM"},
+    {name:"Bulgarian Split Squat",link:"https://www.youtube.com/embed/or1frhkjBDc"}
+  ];
+
+  function renderExercises(list){
+    const container=document.getElementById("exerciseList");
+    container.innerHTML="";
+    list.forEach(ex=>{
+      container.innerHTML+=`<div class="exercise"><h3>${ex.name}</h3><iframe src="${ex.link}" allowfullscreen></iframe></div>`;
+    });
+  }
+  function searchExercise(){
+    const q=document.getElementById("searchInput").value.toLowerCase();
+    const filtered=exercises.filter(ex=>ex.name.toLowerCase().includes(q));
+    renderExercises(filtered);
+  }
+  renderExercises(exercises);
 </script>
 </body>
 </html>
