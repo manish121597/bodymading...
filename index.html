@@ -1,200 +1,479 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Gym Buddy</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Baki Fitness — Manish</title>
   <style>
-    body { margin:0; font-family: Arial, sans-serif; background:#111; color:#fff; }
-    .sidebar {
-      position: fixed; left:0; top:0; bottom:0; width:220px; background:#222; padding:20px;
+    :root{
+      --bg:#0b0b0b; --panel:#121212; --card:#151515; --muted:#bdbdbd;
+      --accent:#e50914; --text:#eee;
     }
-    .sidebar h2 { color:#0f0; }
-    .sidebar a { display:block; margin:10px 0; color:#ccc; text-decoration:none; }
-    .sidebar a:hover { color:#0f0; }
-    .content { margin-left:240px; padding:20px; }
-    section { display:none; }
-    section.active { display:block; }
-    h1,h2,h3 { color:#0f0; }
-    .music-player { margin-top:20px; }
-    .music-controls button { margin:5px; }
-    iframe { width:100%; height:315px; margin:10px 0; border:0; }
-    .search-bar input { padding:8px; width:80%; }
-    .exercise { margin-bottom:20px; }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+      background:linear-gradient(180deg,#090909,#0b0b0b); color:var(--text);
+      display:flex; min-height:100vh;
+    }
+
+    /* Sidebar */
+    .side{
+      width:260px; min-width:220px; background:linear-gradient(180deg,#080808,#0c0c0c);
+      border-right:1px solid #161616; padding:28px 18px; position:fixed; left:0; top:0; bottom:0;
+    }
+    .brand{font-weight:900; color:var(--accent); font-size:30px; margin-bottom:6px}
+    .tag{color:var(--muted); font-size:13px; margin-bottom:18px}
+    .nav{display:flex; flex-direction:column; gap:12px}
+    .nav button{
+      background:transparent; color:var(--text); border:1px solid #2a2a2a; padding:10px 12px;
+      text-align:left; font-weight:700; border-radius:10px; cursor:pointer; font-size:15px;
+    }
+    .nav button.active{outline:2px solid var(--accent); background:#0f0f0f}
+
+    /* Main */
+    main{margin-left:260px; padding:30px; flex:1; min-width:0}
+    section{display:none}
+    section.active{display:block}
+    .page-title{font-size:28px; color:var(--text); margin:0 0 16px}
+    .card{background:var(--panel); border:1px solid #1f1f1f; border-radius:12px; padding:18px; margin-bottom:18px}
+
+    /* Diet cards */
+    .meals{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px}
+    .meal{background:var(--card); border-radius:10px; padding:16px; border-left:6px solid var(--accent)}
+    .meal h3{margin:0 0 8px; color:#ff6b6b}
+    .meal ul{margin:0 0 0 18px; color:var(--muted)}
+
+    /* Workout */
+    pre.workout{
+      background:#0f0f0f; padding:18px; border-radius:10px; font-size:18px; line-height:1.7; color:var(--text);
+    }
+
+    /* Music player */
+    .music-player{display:flex; gap:18px; align-items:center; flex-wrap:wrap}
+    .player-controls{min-width:320px; flex:1}
+    .player-controls .btn{background:var(--accent); color:#fff; border:none; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:800}
+    .player-status{color:var(--muted); margin-top:8px}
+    .playlist{min-width:260px; background:#0f0f0f; border-radius:8px; padding:10px}
+
+    /* tutorials */
+    .search{margin-bottom:14px}
+    .search input{width:100%; padding:12px; border-radius:8px; border:1px solid #222; background:#0f0f0f; color:var(--text)}
+    .tutorial{background:var(--card); padding:12px; border-radius:10px; margin-bottom:18px; border:1px solid #222}
+    .tutorial-title{color:#ff6b6b; font-weight:700; margin:10px 0 0; font-size:18px}
+    iframe.yt{width:100%; height:360px; border-radius:10px; border:0; background:#000}
+
+    /* responsive */
+    @media (max-width:980px){
+      .side{position:fixed; transform:translateX(-100%); transition:transform .18s; z-index:50}
+      .side.open{transform:none}
+      main{margin-left:0; padding:18px}
+    }
   </style>
 </head>
 <body>
 
-<div class="sidebar">
-  <h2>Gym Buddy</h2>
-  <a href="#" onclick="showSection('diet')">Diet Plan</a>
-  <a href="#" onclick="showSection('workout')">Workout Plan</a>
-  <a href="#" onclick="showSection('music')">Music</a>
-  <a href="#" onclick="showSection('tutorials')">Tutorials</a>
-</div>
+  <!-- Sidebar -->
+  <aside class="side" id="sidebar">
+    <div class="brand">Baki Fitness</div>
+    <div class="tag">Built for Manish • Teen-safe hypertrophy</div>
+    <nav class="nav">
+      <button id="btn-diet" class="active" onclick="show('diet', this)">Diet Plan</button>
+      <button id="btn-work" onclick="show('workout', this)">Workout Plan</button>
+      <button id="btn-music" onclick="show('music', this)">Music</button>
+      <button id="btn-tuts" onclick="show('tutorials', this)">Tutorials</button>
+    </nav>
+  </aside>
 
-<div class="content">
-  <!-- Diet Section -->
-  <section id="diet" class="active">
-    <h1>Diet Plan</h1>
-    <p>💊 Supplements: EAA (pre-workout), Whey+Creatine (post-workout), Fish Oil+Multivitamin (breakfast).<br>
-    🥛 Protein: Paneer, Soya, Peanut Butter, Oats spread daily.<br>
-    💧 Hydration: 3–4L water daily.<br>
-    😴 Sleep: 7–8 hours minimum.</p>
-  </section>
+  <!-- Main -->
+  <main>
+    <!-- DIET -->
+    <section id="diet" class="active">
+      <h1 class="page-title">Diet Plan</h1>
 
-  <!-- Workout Section -->
-  <section id="workout">
-    <h1>6-Day Workout Split</h1>
-    <h3>MON – Chest + Triceps</h3>
-    <ul>
-      <li>Push-ups: 3×20–30</li>
-      <li>Flat Bench Press: 4×6–8</li>
-      <li>Incline Dumbbell Press: 3×8–10</li>
-      <li>Pec Deck: 3×12–15</li>
-      <li>Bar Dips: 3×failure</li>
-      <li>Triceps Pushdown: 3×10–12</li>
-      <li>Overhead Triceps Extension: 3×10–12</li>
-      <li>ABS: Hanging Leg Raise 3×15</li>
-    </ul>
-    <h3>TUE – Back + Biceps</h3>
-    <ul>
-      <li>Pull-ups: 4×max</li>
-      <li>Lat Pulldown: 3×10–12</li>
-      <li>Barbell Row: 3×8–10</li>
-      <li>Seated Cable Row: 3×12</li>
-      <li>Dumbbell Bicep Curl: 3×10–12</li>
-      <li>Hammer Curl: 3×10–12</li>
-      <li>Face Pulls: 3×12–15</li>
-      <li>ABS: Plank Hold 3×60s</li>
-    </ul>
-    <h3>WED – Legs</h3>
-    <ul>
-      <li>Squats: 4×6–8</li>
-      <li>Leg Press: 3×10–12</li>
-      <li>Walking Lunges: 3×12 each leg</li>
-      <li>Leg Extension: 3×12–15</li>
-      <li>Standing Calf Raises: 4×15–20</li>
-      <li>ABS: Cable Crunch 3×15</li>
-    </ul>
-    <h3>THU – Shoulders + Traps</h3>
-    <ul>
-      <li>Overhead Press: 4×8–10</li>
-      <li>Dumbbell Lateral Raises: 3×12–15</li>
-      <li>Arnold Press: 3×10–12</li>
-      <li>Rear Delt Fly: 3×12–15</li>
-      <li>Shrugs: 3×12–15</li>
-      <li>ABS: Russian Twists 3×20</li>
-    </ul>
-    <h3>FRI – Back + Arms</h3>
-    <ul>
-      <li>Deadlift: 4×5–6</li>
-      <li>Chest Supported Row: 3×8–10</li>
-      <li>Wide Grip Pulldown: 3×10–12</li>
-      <li>Rear Delt Fly: 3×12</li>
-      <li>Preacher Curl: 3×10–12</li>
-      <li>Reverse Curl: 3×10–12</li>
-      <li>ABS: Hanging Knee Raise 3×15</li>
-    </ul>
-    <h3>SAT – Hamstrings + Glutes</h3>
-    <ul>
-      <li>Romanian Deadlift: 4×8–10</li>
-      <li>Leg Curl: 4×10–12</li>
-      <li>Hip Thrusts: 4×10–12</li>
-      <li>Bulgarian Split Squat: 3×12 each leg</li>
-      <li>Seated Calf Raises: 4×15–20</li>
-      <li>ABS: Plank Variations 3×30s</li>
-    </ul>
-    <p><b>SUN – Rest / Active Recovery</b></p>
-  </section>
+      <div class="card meals">
+        <div class="meal">
+          <h3>Pre-Workout (4:50–5:00am)</h3>
+          <ul>
+            <li>EAA — 1 scoop with water</li>
+            <li>1 banana or 2 dates (quick fuel)</li>
+          </ul>
+        </div>
 
-  <!-- Music Section -->
-  <section id="music">
-    <h1>Music Player</h1>
-    <div class="music-player">
-      <audio id="audio" controls></audio>
-      <div class="music-controls">
-        <button onclick="prevSong()">⏮ Prev</button>
-        <button onclick="nextSong()">⏭ Next</button>
+        <div class="meal">
+          <h3>Post-Workout (6:30am)</h3>
+          <ul>
+            <li>Whey — 1 scoop + 3–5g Creatine</li>
+            <li>Fast carbs: banana / papaya / watermelon</li>
+            <li>5 soaked almonds</li>
+          </ul>
+        </div>
+
+        <div class="meal">
+          <h3>Breakfast (7:30–8:00am)</h3>
+          <ul>
+            <li>Oats (40–50g) + milk + 1 tbsp peanut butter</li>
+            <li>Paneer (50–80g) or 2 boiled eggs</li>
+            <li>Multivitamin + Fish oil</li>
+          </ul>
+        </div>
+
+        <div class="meal">
+          <h3>Lunch (12–1pm)</h3>
+          <ul>
+            <li>Roti (2–3) or Rice (150–200g cooked)</li>
+            <li>Dal + Sabzi</li>
+            <li>Paneer / Soya / Chana (~30g protein)</li>
+            <li>Salad</li>
+          </ul>
+        </div>
+
+        <div class="meal">
+          <h3>Evening Snack (4–5pm)</h3>
+          <ul>
+            <li>Peanut butter sandwich (2 slices + 1 tbsp PB)</li>
+            <li>or Sprouted moong / Roasted chana</li>
+          </ul>
+        </div>
+
+        <div class="meal">
+          <h3>Dinner (8–9pm)</h3>
+          <ul>
+            <li>Roti / Rice + Paneer / Soya / Dal + Sabzi</li>
+            <li>Salad</li>
+          </ul>
+        </div>
       </div>
-      <p id="songTitle"></p>
-    </div>
-  </section>
 
-  <!-- Tutorials Section -->
-  <section id="tutorials">
-    <h1>Workout Tutorials</h1>
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search exercise..." onkeyup="searchExercise()"/>
-    </div>
-    <div id="exerciseList"></div>
-  </section>
-</div>
+      <div class="card">
+        <h3 style="color:#ff6b6b;margin:0 0 8px">Supplements & Notes</h3>
+        <p style="color:var(--muted);margin:0">
+          • EAA: pre-workout (you said intra not possible, so pre is best).<br>
+          • Whey + Creatine: post-workout. Creatine 3–5g daily.<br>
+          • Fish oil + Multivitamin: with breakfast.<br>
+          • Daily protein target: 1.6–2 g/kg bodyweight. Hydration: 3–4 L/day. Sleep: 7–8 hrs.
+        </p>
+      </div>
+    </section>
 
-<script>
-  function showSection(id){
-    document.querySelectorAll("section").forEach(sec=>sec.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-  }
+    <!-- WORKOUT -->
+    <section id="workout">
+      <h1 class="page-title">Workout Plan (6-Day Split)</h1>
+      <div class="card">
+        <pre class="workout">
+MON – Chest + Triceps (Push)
+- Push-ups 3×20–30
+- Flat Bench Press 4×6–8
+- Incline Dumbbell Press 3×8–10
+- Pec Deck / Cable Fly 3×12–15
+- Bar Dips 3×failure
+- Triceps Pushdown 3×10–12
+- Overhead Triceps Extension 3×10–12
+- ABS: Hanging Leg Raise 3×15
 
-  // Music
-  const playlist = [
-    {title:"Badmashi", src:"track1.mp3"},
-    {title:"Jaat Flow", src:"track2.mp3"},
-    {title:"Neffex Go", src:"track3.mp3"},
-    {title:"I Guess", src:"track4.mp3"},
-    {title:"Phonks", src:"track5.mp3"}
-  ];
-  let current = 0;
-  const audio = document.getElementById("audio");
-  const title = document.getElementById("songTitle");
-  function loadSong(i){ audio.src=playlist[i].src; title.textContent="Now Playing: "+playlist[i].title; audio.play(); }
-  function nextSong(){ current=(current+1)%playlist.length; loadSong(current); }
-  function prevSong(){ current=(current-1+playlist.length)%playlist.length; loadSong(current); }
-  loadSong(current);
+TUE – Back + Biceps (Pull)
+- Pull-ups 4×max
+- Lat Pulldown 3×10–12
+- Barbell Row 3×8–10
+- Seated Cable Row 3×12
+- Dumbbell Bicep Curl 3×10–12
+- Hammer Curl 3×10–12
+- Face Pulls 3×12–15
+- ABS: Plank 3×60s
 
-  // Tutorials
-  const exercises = [
-    {name:"Pec Deck",link:"https://www.youtube.com/embed/xYNONVD-VCA?si=gug3h5vcnO7ceaIW"},
-    {name:"Bar Dips",link:"https://www.youtube.com/embed/1_4OICx2WrY"},
-    {name:"Triceps Pushdown",link:"https://www.youtube.com/embed/Rc7-euA8FDI"},
-    {name:"Overhead Triceps Extension",link:"https://www.youtube.com/embed/9Ark9S11uXw"},
-    {name:"Hanging Leg Raise",link:"https://www.youtube.com/embed/XQc0WHO90Lk"},
-    {name:"Lat Pulldown",link:"https://www.youtube.com/embed/z-lxcsIN4T4"},
-    {name:"Barbell Row",link:"https://www.youtube.com/embed/phVtqawIgbk"},
-    {name:"Seated Cable Row",link:"https://www.youtube.com/embed/qD1WZ5pSuvk"},
-    {name:"Face Pulls",link:"https://www.youtube.com/embed/IeOqdw9WI90"},
-    {name:"Plank",link:"https://www.youtube.com/embed/xe2MXatLTUw"},
-    {name:"Back Squat",link:"https://www.youtube.com/embed/Ak1iHbEeeY8"},
-    {name:"Walking Lunges",link:"https://www.youtube.com/embed/tQNktxPkSeE?si=op-IS3f2IR5HM-rK"},
-    {name:"Leg Extension",link:"https://www.youtube.com/embed/d3d2yz7V26c"},
-    {name:"Cable Crunch",link:"https://www.youtube.com/embed/K2m0jj6RfYg"},
-    {name:"Overhead Press",link:"https://www.youtube.com/embed/k6tzKisR3NY"},
-    {name:"Dumbbell Lateral Raises",link:"https://www.youtube.com/embed/Kl3LEzQ5Zqs"},
-    {name:"Arnold Press",link:"https://www.youtube.com/embed/7X8ziWLB06s"},
-    {name:"Rear Delt Fly",link:"https://www.youtube.com/embed/Y59M5fXn8bs?si=sBWcjKWp7T2go44b"},
-    {name:"Shrugs",link:"https://www.youtube.com/embed/rFsSeClGnNA"},
-    {name:"Russian Twists",link:"https://www.youtube.com/embed/aRUMRbl7KS4"},
-    {name:"Chest Supported Row",link:"https://www.youtube.com/embed/-avLxYko1k0"},
-    {name:"Preacher Curl",link:"https://www.youtube.com/embed/LUBgyjKCRWQ"},
-    {name:"Romanian Deadlift",link:"https://www.youtube.com/embed/Wou9zVQrAfs"},
-    {name:"Hip Thrusts",link:"https://www.youtube.com/embed/96uDbymTaHM"},
-    {name:"Bulgarian Split Squat",link:"https://www.youtube.com/embed/or1frhkjBDc"}
-  ];
+WED – Legs (Quads focus)
+- Squats 4×6–8
+- Leg Press 3×10–12
+- Walking Lunges 3×12 each
+- Leg Extension 3×12–15
+- Standing Calf Raises 4×15–20
+- ABS: Cable Crunch 3×15
 
-  function renderExercises(list){
-    const container=document.getElementById("exerciseList");
-    container.innerHTML="";
-    list.forEach(ex=>{
-      container.innerHTML+=`<div class="exercise"><h3>${ex.name}</h3><iframe src="${ex.link}" allowfullscreen></iframe></div>`;
-    });
-  }
-  function searchExercise(){
-    const q=document.getElementById("searchInput").value.toLowerCase();
-    const filtered=exercises.filter(ex=>ex.name.toLowerCase().includes(q));
-    renderExercises(filtered);
-  }
-  renderExercises(exercises);
-</script>
+THU – Shoulders + Traps
+- Overhead Press (BB/DB) 4×8–10
+- Dumbbell Lateral Raises 3×12–15
+- Arnold Press 3×10–12
+- Rear Delt Fly 3×12–15
+- Shrugs 3×12–15
+- ABS: Russian Twists 3×20
+
+FRI – Back + Arms (Pull/Strength)
+- Deadlift 4×5–6
+- Chest Supported Row 3×8–10
+- Wide Grip Pulldown 3×10–12
+- Rear Delt Fly 3×12
+- Preacher Curl 3×10–12
+- Reverse Curl 3×10–12
+- ABS: Hanging Knee Raise 3×15
+
+SAT – Hamstrings + Glutes
+- Romanian Deadlift 4×8–10
+- Leg Curl (Machine) 4×10–12
+- Hip Thrusts 4×10–12
+- Bulgarian Split Squat 3×12 each leg
+- Seated Calf Raises 4×15–20
+- ABS: Plank Variations 3×30s
+
+SUN – Rest / Active recovery (walking, stretching, foam rolling)
+        </pre>
+      </div>
+    </section>
+
+    <!-- MUSIC -->
+    <section id="music">
+      <h1 class="page-title">Music</h1>
+      <div class="card music-player">
+        <div style="display:flex; gap:18px; align-items:center; flex-wrap:wrap">
+          <div class="player-controls">
+            <div style="display:flex; gap:8px; align-items:center;">
+              <button class="btn" id="playBtn" onclick="togglePlay()">▶ Play / Pause</button>
+              <button class="btn" onclick="prevTrack()">⏮ Prev</button>
+              <button class="btn" onclick="nextTrack()">⏭ Next</button>
+            </div>
+            <div class="player-status" id="playerStatus">Tap Play to start (browser may block autoplay)</div>
+            <audio id="audio" preload="auto" style="margin-top:10px;"></audio>
+          </div>
+
+          <div class="playlist">
+            <div style="font-weight:800;color:var(--accent);margin-bottom:8px">Playlist</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div id="t0" style="padding:6px;border-radius:6px;background:#0d0d0d">1 — Badmashi</div>
+              <div id="t1" style="padding:6px;border-radius:6px;background:#0d0d0d">2 — Jaat Flow</div>
+              <div id="t2" style="padding:6px;border-radius:6px;background:#0d0d0d">3 — Neffex Go</div>
+              <div id="t3" style="padding:6px;border-radius:6px;background:#0d0d0d">4 — I Guess</div>
+              <div id="t4" style="padding:6px;border-radius:6px;background:#0d0d0d">5 — Phonks</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px;color:var(--muted);font-size:13px">
+              Note: Must enjoy these songs if any issue or want to change so you can contact to me on <b>gmail</b> … id- <b>op840809@gmail.com</b> .
+        </div>
+      </div>
+    </section>
+
+    <!-- TUTORIALS -->
+    <section id="tutorials">
+      <h1 class="page-title">Tutorials</h1>
+
+      <div class="card">
+        <div class="search">
+          <input id="searchBox" type="text" placeholder="Search exercise (e.g. Lat Pulldown, Pec Deck)..." oninput="filterTutorials()" />
+        </div>
+
+        <div id="tutsContainer">
+          <!-- 25 embedded tutorials (exact links you provided) -->
+          <div class="tutorial" data-title="Pec Deck">
+            <iframe class="yt" src="https://www.youtube.com/embed/xYNONVD-VCA?si=gug3h5vcnO7ceaIW" allowfullscreen></iframe>
+            <div class="tutorial-title">Pec Deck</div>
+          </div>
+
+          <div class="tutorial" data-title="Bar Dips">
+            <iframe class="yt" src="https://www.youtube.com/embed/1_4OICx2WrY" allowfullscreen></iframe>
+            <div class="tutorial-title">Bar Dips</div>
+          </div>
+
+          <div class="tutorial" data-title="Triceps Pushdown">
+            <iframe class="yt" src="https://www.youtube.com/embed/Rc7-euA8FDI" allowfullscreen></iframe>
+            <div class="tutorial-title">Triceps Pushdown</div>
+          </div>
+
+          <div class="tutorial" data-title="Overhead Triceps Extension">
+            <iframe class="yt" src="https://www.youtube.com/embed/9Ark9S11uXw" allowfullscreen></iframe>
+            <div class="tutorial-title">Overhead Triceps Extension</div>
+          </div>
+
+          <div class="tutorial" data-title="Hanging Leg Raise">
+            <iframe class="yt" src="https://www.youtube.com/embed/XQc0WHO90Lk?si=2PJmTV4CFUdU3ubN" allowfullscreen></iframe>
+            <div class="tutorial-title">Hanging Leg Raise</div>
+          </div>
+
+          <div class="tutorial" data-title="Lat Pulldown">
+            <iframe class="yt" src="https://www.youtube.com/embed/z-lxcsIN4T4" allowfullscreen></iframe>
+            <div class="tutorial-title">Lat Pulldown</div>
+          </div>
+
+          <div class="tutorial" data-title="Barbell Row">
+            <iframe class="yt" src="https://www.youtube.com/embed/phVtqawIgbk" allowfullscreen></iframe>
+            <div class="tutorial-title">Barbell Row</div>
+          </div>
+
+          <div class="tutorial" data-title="Seated Cable Row">
+            <iframe class="yt" src="https://www.youtube.com/embed/qD1WZ5pSuvk" allowfullscreen></iframe>
+            <div class="tutorial-title">Seated Cable Row</div>
+          </div>
+
+          <div class="tutorial" data-title="Face Pulls">
+            <iframe class="yt" src="https://www.youtube.com/embed/IeOqdw9WI90" allowfullscreen></iframe>
+            <div class="tutorial-title">Face Pulls</div>
+          </div>
+
+          <div class="tutorial" data-title="Plank">
+            <iframe class="yt" src="https://www.youtube.com/embed/xe2MXatLTUw?si=8aDxegS8WJy2fgQE" allowfullscreen></iframe>
+            <div class="tutorial-title">Plank</div>
+          </div>
+
+          <div class="tutorial" data-title="Back Squat">
+            <iframe class="yt" src="https://www.youtube.com/embed/Ak1iHbEeeY8" allowfullscreen></iframe>
+            <div class="tutorial-title">Back Squat</div>
+          </div>
+
+          <div class="tutorial" data-title="Walking Lunges">
+            <iframe class="yt" src="https://www.youtube.com/embed/tQNktxPkSeE?si=op-IS3f2IR5HM-rK" allowfullscreen></iframe>
+            <div class="tutorial-title">Walking Lunges</div>
+          </div>
+
+          <div class="tutorial" data-title="Leg Extension">
+            <iframe class="yt" src="https://www.youtube.com/embed/d3d2yz7V26c" allowfullscreen></iframe>
+            <div class="tutorial-title">Leg Extension</div>
+          </div>
+
+          <div class="tutorial" data-title="Cable Crunch">
+            <iframe class="yt" src="https://www.youtube.com/embed/K2m0jj6RfYg" allowfullscreen></iframe>
+            <div class="tutorial-title">Cable Crunch</div>
+          </div>
+
+          <div class="tutorial" data-title="Overhead Press">
+            <iframe class="yt" src="https://www.youtube.com/embed/k6tzKisR3NY" allowfullscreen></iframe>
+            <div class="tutorial-title">Overhead Press</div>
+          </div>
+
+          <div class="tutorial" data-title="Dumbbell Lateral Raises">
+            <iframe class="yt" src="https://www.youtube.com/embed/Kl3LEzQ5Zqs" allowfullscreen></iframe>
+            <div class="tutorial-title">Dumbbell Lateral Raises</div>
+          </div>
+
+          <div class="tutorial" data-title="Arnold Press">
+            <iframe class="yt" src="https://www.youtube.com/embed/7X8ziWLB06s" allowfullscreen></iframe>
+            <div class="tutorial-title">Arnold Press</div>
+          </div>
+
+          <div class="tutorial" data-title="Rear Delt Fly">
+            <iframe class="yt" src="https://www.youtube.com/embed/Y59M5fXn8bs?si=sBWcjKWp7T2go44b" allowfullscreen></iframe>
+            <div class="tutorial-title">Rear Delt Fly</div>
+          </div>
+
+          <div class="tutorial" data-title="Shrugs">
+            <iframe class="yt" src="https://www.youtube.com/embed/rFsSeClGnNA" allowfullscreen></iframe>
+            <div class="tutorial-title">Shrugs</div>
+          </div>
+
+          <div class="tutorial" data-title="Russian Twists">
+            <iframe class="yt" src="https://www.youtube.com/embed/aRUMRbl7KS4" allowfullscreen></iframe>
+            <div class="tutorial-title">Russian Twists</div>
+          </div>
+
+          <div class="tutorial" data-title="Chest Supported Row">
+            <iframe class="yt" src="https://www.youtube.com/embed/-avLxYko1k0" allowfullscreen></iframe>
+            <div class="tutorial-title">Chest Supported Row</div>
+          </div>
+
+          <div class="tutorial" data-title="Preacher Curl">
+            <iframe class="yt" src="https://www.youtube.com/embed/LUBgyjKCRWQ" allowfullscreen></iframe>
+            <div class="tutorial-title">Preacher Curl</div>
+          </div>
+
+          <div class="tutorial" data-title="Romanian Deadlift">
+            <iframe class="yt" src="https://www.youtube.com/embed/Wou9zVQrAfs" allowfullscreen></iframe>
+            <div class="tutorial-title">Romanian Deadlift</div>
+          </div>
+
+          <div class="tutorial" data-title="Hip Thrusts">
+            <iframe class="yt" src="https://www.youtube.com/embed/96uDbymTaHM" allowfullscreen></iframe>
+            <div class="tutorial-title">Hip Thrusts</div>
+          </div>
+
+          <div class="tutorial" data-title="Bulgarian Split Squat">
+            <iframe class="yt" src="https://www.youtube.com/embed/or1frhkjBDc" allowfullscreen></iframe>
+            <div class="tutorial-title">Bulgarian Split Squat</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // default view
+    document.getElementById('diet').classList.add('active');
+
+    // navigation
+    function show(sectionId, btnElem){
+      // hide all section elements visually
+      document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+      // active button styling
+      document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+      if(btnElem) btnElem.classList.add('active');
+      // update scroll to top of main
+      window.scrollTo(0,0);
+    }
+
+    // TUTORIALS search
+    function filterTutorials(){
+      const q = document.getElementById('searchBox').value.trim().toLowerCase();
+      document.querySelectorAll('#tutsContainer .tutorial').forEach(card=>{
+        const title = card.getAttribute('data-title').toLowerCase();
+        card.style.display = (title.includes(q) ? 'block' : 'none');
+      });
+    }
+
+    // MUSIC player logic (single audio + prev/next)
+    const playlist = [
+      {file: 'track1.mp3', name: 'Badmashi'},
+      {file: 'track2.mp3', name: 'Jaat Flow'},
+      {file: 'track3.mp3', name: 'Neffex Go'},
+      {file: 'track4.mp3', name: 'I Guess'},
+      {file: 'track5.mp3', name: 'Phonks'}
+    ];
+    let current = 0;
+    const audio = document.getElementById('audio');
+    const status = document.getElementById('playerStatus');
+
+    function loadTrack(i){
+      current = (i + playlist.length) % playlist.length;
+      audio.src = playlist[current].file;
+      highlightPlaylist(current);
+      status.textContent = `Now loaded: ${playlist[current].name} (${current+1}/${playlist.length}) — press Play`;
+    }
+
+    function togglePlay(){
+      if(!audio.src) loadTrack(current);
+      if(audio.paused) {
+        audio.play().catch(()=>{ status.textContent = 'Autoplay blocked — click Play again or interact with page.'; });
+        status.textContent = `Playing: ${playlist[current].name}`;
+      } else {
+        audio.pause();
+        status.textContent = `Paused: ${playlist[current].name}`;
+      }
+    }
+
+    function nextTrack(){
+      loadTrack(current+1);
+      audio.play().catch(()=>{ status.textContent = 'Autoplay blocked — press Play.'; });
+    }
+    function prevTrack(){
+      loadTrack(current-1);
+      audio.play().catch(()=>{ status.textContent = 'Autoplay blocked — press Play.'; });
+    }
+
+    function highlightPlaylist(idx){
+      for(let i=0;i<playlist.length;i++){
+        const el = document.getElementById('t'+i);
+        if(el) el.style.background = (i===idx ? '#241212' : '#0d0d0d');
+      }
+    }
+
+    // initialize
+    loadTrack(0);
+
+    // progress -> auto next when ended
+    audio.addEventListener('ended', ()=>{ nextTrack(); });
+
+    // Show first section by default
+    document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
+    document.getElementById('diet').classList.add('active');
+
+    // helper: connect search box to filter on key
+    document.getElementById('searchBox')?.addEventListener('input', filterTutorials);
+  </script>
 </body>
 </html>
