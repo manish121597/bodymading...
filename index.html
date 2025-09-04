@@ -219,94 +219,11 @@ SUN – Rest / Active recovery (walking, stretching, foam rolling)
     </section>
 
     <!-- MUSIC -->
-  <section id="music">
-  <h1 class="page-title">Music</h1>
-  <div class="card music-player">
-    <div style="display:flex; gap:18px; align-items:center; flex-wrap:wrap">
-      <div class="player-controls">
-        <div style="display:flex; gap:8px; align-items:center;">
-          <button class="btn" id="playBtn" onclick="togglePlay()">▶ Play / Pause</button>
-          <button class="btn" onclick="prevTrack()">⏮ Prev</button>
-          <button class="btn" onclick="nextTrack()">⏭ Next</button>
-        </div>
-        <div class="player-status" id="playerStatus">
-          Tap Play to start (browser may block autoplay)
-        </div>
-        <audio id="audio" preload="auto" style="margin-top:10px;" controls></audio>
-      </div>
-
-      <div class="playlist">
-        <div style="font-weight:800;color:var(--accent);margin-bottom:8px">Playlist</div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <div id="t0" style="padding:6px;border-radius:6px;background:#0d0d0d">1 — Badmashi</div>
-          <div id="t1" style="padding:6px;border-radius:6px;background:#0d0d0d">2 — Jaat Flow</div>
-          <div id="t2" style="padding:6px;border-radius:6px;background:#0d0d0d">3 — Neffex Go</div>
-          <div id="t3" style="padding:6px;border-radius:6px;background:#0d0d0d">4 — I Guess</div>
-          <div id="t4" style="padding:6px;border-radius:6px;background:#0d0d0d">5 — Phonks</div>
-        </div>
-      </div>
-    </div>
-    <div style="margin-top:12px;color:var(--muted);font-size:13px">
-      Note: Must enjoy these songs if any issue or want to change so you can contact to me on 
-      <b>gmail</b> … id- <b>op840809@gmail.com</b> .
-    </div>
-  </div>
-</section>
-
-<script>
-  // songs list (upload mp3s inside "songs/" folder in repo)
-  const songs = [
-    "songs/badmashi.mp3",
-    "songs/jaatflow.mp3",
-    "songs/neffex_go.mp3",
-    "songs/iguess.mp3",
-    "songs/phonks.mp3"
-  ];
-
-  let currentTrack = 0;
-  const audio = document.getElementById("audio");
-  const status = document.getElementById("playerStatus");
-
-  function loadTrack(index) {
-    audio.src = songs[index];
-    audio.play().then(() => {
-      status.innerText = "Now Playing: " + document.getElementById("t" + index).innerText;
-    }).catch(() => {
-      status.innerText = "Click Play to start (autoplay blocked)";
-    });
-    highlightTrack(index);
-  }
-
-  function togglePlay() {
-    if (audio.paused) {
-      audio.play();
-      status.innerText = "Now Playing: " + document.getElementById("t" + currentTrack).innerText;
-    } else {
-      audio.pause();
-      status.innerText = "Paused";
-    }
-  }
-
-  function prevTrack() {
-    currentTrack = (currentTrack - 1 + songs.length) % songs.length;
-    loadTrack(currentTrack);
-  }
-
-  function nextTrack() {
-    currentTrack = (currentTrack + 1) % songs.length;
-    loadTrack(currentTrack);
-  }
-
-  function highlightTrack(index) {
-    for (let i = 0; i < songs.length; i++) {
-      document.getElementById("t" + i).style.background = "#0d0d0d";
-    }
-    document.getElementById("t" + index).style.background = "#222";
-  }
-
-  // Load first track initially
-  loadTrack(currentTrack);
-</script>
+  .music-player{display:flex; gap:18px; align-items:center; flex-wrap:wrap}
+    .player-controls{min-width:320px; flex:1}
+    .player-controls .btn{background:var(--accent); color:#fff; border:none; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:800}
+    .player-status{color:var(--muted); margin-top:8px}
+    .playlist{min-width:260px; background:#0f0f0f; border-radius:8px; padding:10px}
 
     <!-- TUTORIALS -->
     <section id="tutorials">
@@ -535,4 +452,5 @@ SUN – Rest / Active recovery (walking, stretching, foam rolling)
   </script>
 </body>
 </html>
+
 
