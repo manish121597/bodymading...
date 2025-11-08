@@ -3,571 +3,368 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Baki Fitness — Manish</title>
+  <title>Sylarx | Baki Mode</title>
+  <meta name="description" content="Sylarx | Baki Mode — training, diet, music" />
   <style>
     :root{
-      --bg:#07080a; --panel:#0f1113; --card:#121416; --muted:#bfc9cf;
-      --accent:#1fb6ff; --text:#eef6fb;
+      --bg-0: #020203;
+      --bg-1: #070707;
+      --panel: #0f0f10;
+      --card: #121214;
+      --muted: #bdbdbd;
+      --accent: #FF4D4D; /* red accent */
+      --text: #f2f6f8;
+      --glow: 0 0 40px rgba(255,77,77,0.12), 0 0 120px rgba(255,77,77,0.05);
     }
+
+    /* Base */
     *{box-sizing:border-box}
-    body{
-      margin:0; font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
-      background:linear-gradient(180deg,#06070a,#0b0d10); color:var(--text);
-      display:flex; min-height:100vh;
-    }
+    html,body{height:100%; margin:0; font-family:Inter,Segoe UI,Roboto,Arial,sans-serif; color:var(--text); background:radial-gradient(ellipse at center, rgba(255,77,77,0.03) 0%, transparent 20%), linear-gradient(180deg,var(--bg-0),var(--bg-1)); -webkit-font-smoothing:antialiased}
+    a{color:inherit; text-decoration:none}
+    main{margin-left:280px; padding:28px; min-height:100vh}
 
     /* Sidebar */
     .side{
-      width:260px; min-width:220px; background:linear-gradient(180deg,#081017,#0c1317);
-      border-right:1px solid rgba(255,255,255,0.03); padding:28px 18px; position:fixed; left:0; top:0; bottom:0;
+      width:280px; position:fixed; left:0; top:0; bottom:0;
+      background:linear-gradient(180deg, rgba(20,6,6,0.85), rgba(10,6,6,0.9));
+      border-right:1px solid rgba(255,255,255,0.03); padding:28px 20px; display:flex; flex-direction:column; gap:14px;
+      box-shadow: var(--glow);
     }
-    .brand{font-weight:900; color:var(--accent); font-size:30px; margin-bottom:6px}
-    .tag{color:var(--muted); font-size:13px; margin-bottom:18px}
-    .nav{display:flex; flex-direction:column; gap:12px}
+    .brand{font-weight:900; color:var(--accent); font-size:24px; letter-spacing:0.6px}
+    .subtitle{color:var(--muted); font-size:13px}
+    .nav{display:flex; flex-direction:column; gap:10px; margin-top:8px}
     .nav button{
-      background:transparent; color:var(--text); border:1px solid rgba(255,255,255,0.04); padding:10px 12px;
-      text-align:left; font-weight:700; border-radius:10px; cursor:pointer; font-size:15px;
+      background:transparent; color:var(--text); border:1px solid rgba(255,255,255,0.03); padding:10px 12px;
+      text-align:left; font-weight:800; border-radius:10px; cursor:pointer; font-size:15px; transition:all .18s;
     }
-    .nav button.active{outline:2px solid var(--accent); background:rgba(31,182,255,0.06)}
+    .nav button.active{background:rgba(255,77,77,0.06); box-shadow:0 8px 28px rgba(255,77,77,0.04); transform:translateY(-2px)}
 
-    /* Main */
-    main{margin-left:260px; padding:30px; flex:1; min-width:0}
-    section{display:none}
-    section.active{display:block}
-    .page-title{font-size:28px; color:var(--text); margin:0 0 16px}
-    .card{background:var(--panel); border:1px solid rgba(255,255,255,0.03); border-radius:12px; padding:18px; margin-bottom:18px}
+    /* top small info */
+    .meta{margin-top:auto; font-size:12px; color:var(--muted)}
 
-    /* Diet cards */
+    /* Header / page title */
+    .page-title{font-size:28px; margin:0 0 14px; color:var(--text); display:flex; align-items:center; gap:12px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.015)); border:1px solid rgba(255,255,255,0.03); border-radius:12px; padding:18px; margin-bottom:16px; box-shadow: 0 6px 24px rgba(0,0,0,0.6)}
+    .row{display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap}
+
+    /* Placeholders and headings */
+    h3{margin:0 0 8px; color:var(--accent)}
+    p.lead{color:var(--muted); margin:0 0 12px}
+
+    /* two column meal grid */
     .meals{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px}
-    .meal{background:var(--card); border-radius:10px; padding:16px; border-left:6px solid var(--accent)}
-    .meal h3{margin:0 0 8px; color:var(--accent)}
-    .meal ul{margin:0 0 0 18px; color:var(--muted)}
+    .meal{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008)); border-left:6px solid rgba(255,77,77,0.9); padding:14px; border-radius:8px}
+    .meal ul{margin:6px 0 0 18px; color:var(--muted)}
 
-    /* Workout */
-    pre.workout{
-      background:rgba(255,255,255,0.02); padding:18px; border-radius:10px; font-size:15px; line-height:1.6; color:var(--text);
-      overflow:auto;
+    /* workout pre block */
+    pre.workout{background:rgba(255,255,255,0.01); padding:14px; border-radius:10px; color:var(--text); font-size:14px; line-height:1.6; overflow:auto; border:1px solid rgba(255,255,255,0.02)}
+
+    /* music player */
+    .music-player{display:flex; gap:18px; align-items:center; flex-wrap:wrap}
+    .player-controls{min-width:320px; flex:1}
+    .player-controls .btn{background:var(--accent); color:#0b0b0b; border:none; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:800; box-shadow:0 6px 18px rgba(255,77,77,0.08)}
+    .player-controls .btn.small{padding:8px 10px; font-weight:700}
+    .player-status{color:var(--muted); margin-top:8px; font-size:14px}
+    .playlist{min-width:280px; background:rgba(255,255,255,0.01); border-radius:8px; padding:10px; border:1px solid rgba(255,255,255,0.02)}
+    .track{padding:8px;border-radius:6px;background:rgba(255,255,255,0.01);cursor:pointer;transition:all .15s;color:var(--muted);font-weight:700}
+    .track:hover{transform:translateX(6px); background:rgba(255,255,255,0.03)}
+    .track.playing{background:linear-gradient(90deg, rgba(255,77,77,0.12), rgba(255,77,77,0.06)); color:var(--accent); box-shadow: var(--glow);}
+
+    /* Now playing glow ring */
+    .now-playing-ring{
+      width:56px;height:56px;border-radius:50%;background:linear-gradient(180deg, rgba(255,77,77,0.14), rgba(255,77,77,0.06));
+      display:flex; align-items:center; justify-content:center; box-shadow: 0 6px 28px rgba(255,77,77,0.06); transition:all .18s;
     }
-
-    /* Music player */
- // 🎧 Local Music Player Logic
-    const audio = document.getElementById("audio");
-    const statusText = document.getElementById("playerStatus");
-    const tracks = [
-      "badmashi.mp3",
-      "jaatflow.mp3",
-      "neffex_go.mp3",
-      "iguess.mp3",
-      "phonks.mp3"
-    ];
-
-    let currentTrack = 0;
-
-    function loadTrack(index) {
-      if (index < 0) index = tracks.length - 1;
-      if (index >= tracks.length) index = 0;
-      currentTrack = index;
-      audio.src = tracks[currentTrack];
-      audio.load();
-      highlightTrack();
-      statusText.textContent = "Loaded: " + tracks[currentTrack];
+    .pulse { 
+      width:12px;height:12px;border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); animation: pulse 1s infinite;
     }
-
-    function togglePlay() {
-      if (audio.paused) {
-        audio.play();
-        statusText.textContent = "Playing: " + tracks[currentTrack];
-      } else {
-        audio.pause();
-        statusText.textContent = "Paused";
-      }
+    @keyframes pulse {
+      0% { transform:scale(1); opacity:1}
+      50% { transform:scale(1.65); opacity:0.6}
+      100% { transform:scale(1); opacity:1}
     }
-
-    function nextTrack() {
-      loadTrack(currentTrack + 1);
-      audio.play();
-      statusText.textContent = "Playing: " + tracks[currentTrack];
-    }
-
-    function prevTrack() {
-      loadTrack(currentTrack - 1);
-      audio.play();
-      statusText.textContent = "Playing: " + tracks[currentTrack];
-    }
-
-    function highlightTrack() {
-      document.querySelectorAll(".track").forEach((t, i) => {
-        t.style.background = i === currentTrack ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.01)";
-        t.style.color = i === currentTrack ? "var(--accent)" : "white";
-      });
-    }
-
-    loadTrack(0);
-  </script>
-</section>
 
     /* small screens */
     @media (max-width:980px){
-      .side{position:fixed; transform:translateX(-100%); transition:transform .18s; z-index:50}
+      .side{transform:translateX(-100%); position:fixed; z-index:50; transition:transform .18s}
       .side.open{transform:none}
       main{margin-left:0; padding:18px}
       .meals{grid-template-columns:1fr}
+      .player-controls{min-width:0}
     }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
+  <!-- SIDEBAR -->
   <aside class="side" id="sidebar">
-    <div class="brand">Baki Fitness</div>
-    <div class="tag">Built for Manish • Teen-safe hypertrophy</div>
-    <nav class="nav">
-      <button id="btn-diet" class="active" onclick="show('diet', this)">Diet Plan</button>
-      <button id="btn-work" onclick="show('workout', this)">Workout Plan</button>
-      <button id="btn-music" onclick="show('music', this)">Music</button>
-      <button id="btn-tuts" onclick="show('tutorials', this)">Tutorials</button>
+    <div class="brand">Sylarx | Baki Mode</div>
+    <div class="subtitle">Intense trainer • Teen-safe hypertrophy</div>
+
+    <nav class="nav" aria-label="Main navigation">
+      <button onclick="scrollToId('home', this)" class="active">Home</button>
+      <button onclick="scrollToId('workout', this)">Workout Plan</button>
+      <button onclick="scrollToId('diet', this)">Diet Plan</button>
+      <button onclick="scrollToId('notes', this)">Transformation Notes</button>
+      <button onclick="scrollToId('music', this)">Music</button>
     </nav>
+
+    <div class="meta">
+      <div style="margin-top:14px; font-size:13px; color:var(--muted)">Gym timing: 5:00 PM — 7:00 PM</div>
+      <div style="margin-top:10px; font-size:12px; color:var(--muted)">Contact: op840809@gmail.com</div>
+    </div>
   </aside>
 
-  <!-- Main -->
-  <main>
-    <!-- DIET -->
-    <section id="diet" class="active">
-      <h1 class="page-title">Baki Winter Diet — Eggetarian Plan (Gym 5:00–7:00 PM)</h1>
-
-      <div class="card meals">
-        <div class="meal">
-          <h3>Morning (7:00–7:30 AM)</h3>
-          <ul>
-            <li>Warm water + lemon + 5 soaked almonds + 1 walnut</li>
-            <li>Optional: 1 tsp chyawanprash or honey (for winter immunity)</li>
+  <!-- MAIN -->
+  <main id="main">
+    <!-- HOME -->
+    <section id="home" class="card">
+      <h1 class="page-title">Welcome — Sylarx Baki Mode</h1>
+      <p class="lead">This page is your training hub. Quick links on left. Use the Music player while you train. Workout & diet content placeholders are ready to fill.</p>
+      <div class="row">
+        <div class="card" style="flex:1;min-width:260px">
+          <h3>Quick Start</h3>
+          <ul style="color:var(--muted);margin:6px 0 0 18px">
+            <li>Follow consistent training 6 days/week.</li>
+            <li>Protein target ~1.6–2 g/kg bodyweight.</li>
+            <li>Sleep 7–8 hours. Hydrate 3–3.5 L/day.</li>
           </ul>
         </div>
 
-        <div class="meal">
-          <h3>Breakfast (8:00–8:30 AM)</h3>
-          <ul>
-            <li>Oats 50 g (cooked) + 1 banana + 1 tbsp peanut butter + 1 scoop pea protein (mix with warm milk)</li>
-            <li>Or: Paneer bhurji (100 g) + 2 rotis</li>
-          </ul>
+        <div class="card" style="width:220px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div class="now-playing-ring" id="ring" title="Now playing">
+            <div id="ringPulse" style="display:none" class="pulse"></div>
+            <div id="ringIdle" style="color:var(--muted); font-weight:800; font-size:12px">Baki</div>
+          </div>
+          <div style="margin-top:10px;color:var(--muted);font-size:13px">Aura: Neon Red</div>
         </div>
-
-        <div class="meal">
-          <h3>Mid-Morning Snack (11:00 AM)</h3>
-          <ul>
-            <li>2 boiled eggs</li>
-            <li>Or roasted chana / fruit (apple/orange)</li>
-          </ul>
-        </div>
-
-        <div class="meal">
-          <h3>Lunch (1:30–2:00 PM)</h3>
-          <ul>
-            <li>2 rotis + 1 small bowl rice</li>
-            <li>Dal / Rajma / Chole + paneer or tofu (protein source)</li>
-            <li>Cooked veggies + salad + 1 tsp ghee</li>
-          </ul>
-        </div>
-
-        <div class="meal">
-          <h3>Pre-Workout (4:15–4:30 PM)</h3>
-          <ul>
-            <li>1 banana + 1 tbsp peanut butter</li>
-            <li>Black coffee (optional) — take 30–45 minutes before workout</li>
-          </ul>
-        </div>
-
-        <div class="meal">
-          <h3>Post-Workout (7:00–7:20 PM)</h3>
-          <ul>
-            <li>1 scoop Pea Protein (unflavoured) mixed in water or warm milk</li>
-            <li>Creatine 3–5 g (mix with post-workout shake) — daily</li>
-            <li>Quick carbs if needed: banana or slice brown bread</li>
-          </ul>
-        </div>
-
-        <div class="meal">
-          <h3>Dinner (8:30–9:00 PM)</h3>
-          <ul>
-            <li>2 rotis + paneer/tofu / dal + cooked vegetables</li>
-            <li>Optional: 1 glass warm milk before bed</li>
-          </ul>
-        </div>
-
-        <div class="meal">
-          <h3>Before Sleep (10:00–10:30 PM)</h3>
-          <ul>
-            <li>Curd / Greek yogurt 50 g OR warm milk with a pinch of turmeric</li>
-            <li>Hydration target: 3–3.5 L/day (even in winter)</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 style="color:var(--accent);margin:0 0 8px">Supplements & Quick Notes</h3>
-        <p style="color:var(--muted);margin:0">
-          • Multivitamin (HK Vitals): take with breakfast every morning.<br>
-          • Fish oil (HK Vitals): with lunch (daily).<br>
-          • Creatine: 3–5 g daily — mix with post-workout protein shake (or any drink).<br>
-          • EAA: sip during workout (intra-workout) or as pre-workout if needed.<br>
-          • Pea Protein: post-workout and as needed to hit protein target (~1.6–2 g/kg/day).<br>
-          • Peanut butter & oats: great daily fats & carbs — include in breakfast or pre-workout.<br>
-          • Protein target: aim ~110–140 g/day for your weight & goals. Sleep 7–8 hrs.
-        </p>
       </div>
     </section>
 
     <!-- WORKOUT -->
-    <section id="workout">
-      <h1 class="page-title">Transformation Workout — Winter Edition (3 Phases)</h1>
-      <div class="card">
-        <p style="color:var(--muted);margin:0 0 12px">
-          This plan is structured as Phase 1 → Phase 2 → Phase 3 (6–9 month roadmap). You train 6 days/week. Focus on progressive overload and clean form.
-        </p>
+    <section id="workout" class="card" style="margin-top:18px">
+      <h2 class="page-title">Workout Plan</h2>
+      <p class="lead">Placeholder: Add your full training routines here (Push / Pull / Legs, progress notes). Keep sets, reps, rest times and tempo.</p>
 
-        <h3 style="color:var(--accent);margin-top:12px">Phase 1 — Foundation (Dec–Feb)</h3>
-        <pre class="workout">
-Structure: 6 days (Push / Pull / Legs) — moderate volume, learn tempo and control.
+      <!-- Example placeholder structure -->
+      <div class="row">
+        <div class="card" style="flex:1;min-width:260px">
+          <h3>Phase 1 — Foundation</h3>
+          <p style="color:var(--muted)">Add your Phase 1 routine: exercises, sets, and notes.</p>
+        </div>
 
-MON – Push (Chest, Shoulders, Triceps)
-- Barbell Bench Press 4×6–8
-- Incline Dumbbell Press 3×8–10
-- Overhead Press 3×8–10
-- Dumbbell Lateral Raise 3×12–15
-- Triceps Pushdown 3×10–12
-- Hanging Leg Raise 3×12–15
-
-TUE – Pull (Back, Biceps)
-- Pull-ups 4×max
-- Barbell Row 3×6–8
-- Seated Cable Row 3×10–12
-- Face Pulls 3×12–15
-- Dumbbell Curls 3×10–12
-- Plank 3×60s
-
-WED – Legs (Quads focus)
-- Back Squat 4×6–8
-- Romanian Deadlift 3×8–10
-- Leg Press 3×10–12
-- Walking Lunges 3×12 each
-- Standing Calf Raise 4×15–20
-
-THU – Push (variation, slightly lighter)
-- Incline DB Press 4×8–10
-- Cable Fly 3×12–15
-- Arnold Press 3×10–12
-- Triceps Dips 3×failure
-- Core: Cable Crunch 3×15
-
-FRI – Pull (strength focus)
-- Deadlift 4×4–6
-- Wide-Grip Lat Pulldown 3×10
-- Chest-Supported Row 3×8–10
-- Hammer Curls 3×10–12
-- Rear Delt Fly 3×12–15
-
-SAT – Legs (Hamstrings & Glutes)
-- Romanian Deadlift 4×8–10
-- Hip Thrust 4×8–10
-- Bulgarian Split Squat 3×12 each
-- Seated Calf Raise 4×15
-- Mobility & light core work
-
-SUN – Rest / Active recovery
-        </pre>
-
-        <h3 style="color:var(--accent);margin-top:12px">Phase 2 — Growth & Volume (Mar–May)</h3>
-        <pre class="workout">
-Structure: Increase weekly volume & intensity. Add 1–2 intensity techniques (drop sets, short rest supersets).
-- Train same split but slightly higher reps (8–12) and occasional supersets.
-- Add 10–20% calories (clean surplus) and keep protein high.
-- Continue creatine + EAA; track weekly measurements.
-        </pre>
-
-        <h3 style="color:var(--accent);margin-top:12px">Phase 3 — Definition & Refinement (Jun–Aug)</h3>
-        <pre class="workout">
-Structure: Preserve muscle, reduce body fat, increase conditioning.
-- Slight calorie reduction, add 2 cardio sessions/week (15–25 min incline walk / HIIT).
-- Keep strength training 4–5x/week, focus on time under tension and posture.
-- Maintain protein, prioritize sleep & recovery.
-        </pre>
-
+        <div class="card" style="flex:1;min-width:260px">
+          <h3>Phase 2 — Growth</h3>
+          <p style="color:var(--muted)">Add Phase 2 volume and intensity progressions.</p>
+        </div>
       </div>
-
-      <!-- Transformation Notes card -->
-      <div class="card">
-        <h3 style="color:var(--accent);margin:0 0 8px">Transformation Notes — Supplements, Recovery & Rules</h3>
-        <p style="color:var(--muted);margin:0 0 8px">
-          • Supplement timing: Multivitamin after breakfast; Fish oil with lunch; Creatine with post-workout shake; Pea protein immediately post-workout; EAA during workout as needed.<br>
-          • Sleep & Recovery: 7–8 hours nightly. If tired, reduce volume or take an extra rest day — do not skip protein or creatine.<br>
-          • Tracking: Take progress photos every 2 weeks, note weights/reps, and measure arms, chest, waist monthly.<br>
-          • Diet rule: 90% clean food, 1 weekly cheat allowed. Aim 1.6–2 g protein/kg bodyweight. Hydrate 3–3.5 L/day.<br>
-          • Mindset: be consistent for 6–9 months. Progress is cumulative — small weekly gains add up.
-        </p>
+      <div style="margin-top:12px">
+        <pre class="workout">// Paste your detailed plan here. Example:
+// MON – Push: Bench 4x6-8, Incline DB 3x8-10, OHP 3x8-10
+// TUE – Pull: Pull-ups, Rows, Curls, Face Pulls
+// ...</pre>
       </div>
     </section>
 
-<!-- 🎵 WORKING MUSIC PLAYER (Fixed & Same Style) -->
-<section id="music">
-  <h1 class="page-title">Music</h1>
-  <div class="card music-player">
-    <div style="display:flex; gap:18px; align-items:center; flex-wrap:wrap">
-      <div class="player-controls">
-        <div style="display:flex; gap:8px; align-items:center;">
-          <button class="btn" id="playBtn" onclick="togglePlay()">▶ Play / Pause</button>
-          <button class="btn" onclick="prevTrack()">⏮ Prev</button>
-          <button class="btn" onclick="nextTrack()">⏭ Next</button>
-        </div>
-        <div class="player-status" id="playerStatus">Tap Play to start (browser may block autoplay)</div>
-        <audio id="audio" preload="auto" style="margin-top:10px;"></audio>
-      </div>
+    <!-- DIET -->
+    <section id="diet" class="card" style="margin-top:18px">
+      <h2 class="page-title">Diet Plan</h2>
+      <p class="lead">Placeholder: Paste your Eggetarian winter diet or full meal plan here.</p>
 
-      <div class="playlist">
-        <div style="font-weight:800;color:var(--accent);margin-bottom:8px">Playlist</div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <div id="t0" class="track">1 — Badmashi</div>
-          <div id="t1" class="track">2 — Jaat Flow</div>
-          <div id="t2" class="track">3 — Neffex Go</div>
-          <div id="t3" class="track">4 — I Guess</div>
-          <div id="t4" class="track">5 — Phonks</div>
+      <div class="meals">
+        <div class="meal">
+          <h3>Breakfast</h3>
+          <ul><li>Add your morning meals — oats/eggs/paneer etc.</li></ul>
+        </div>
+        <div class="meal">
+          <h3>Lunch</h3>
+          <ul><li>Add main meal details — roti/rice + dal/paneer + veg.</li></ul>
+        </div>
+        <div class="meal">
+          <h3>Pre-Workout</h3>
+          <ul><li>Banana + peanut butter / black coffee</li></ul>
+        </div>
+        <div class="meal">
+          <h3>Post-Workout</h3>
+          <ul><li>Pea protein + creatine / quick carbs</li></ul>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div style="margin-top:12px;color:var(--muted);font-size:13px">
-      Note: Must enjoy these songs — for issues or changes contact me at <b>op840809@gmail.com</b>.
-    </div>
-  </div>
+    <!-- NOTES -->
+    <section id="notes" class="card" style="margin-top:18px">
+      <h2 class="page-title">Transformation Notes</h2>
+      <p class="lead">Placeholder: Add supplements, rules, tracking and recovery notes.</p>
 
-  <script>
-        
-    <!-- TUTORIALS -->
-    <section id="tutorials">
-      <h1 class="page-title">Tutorials</h1>
+      <div class="row">
+        <div class="card" style="flex:1;min-width:260px">
+          <h3>Supplements</h3>
+          <ul style="color:var(--muted);margin:6px 0 0 18px">
+            <li>Multivitamin — with breakfast</li>
+            <li>Fish Oil — with lunch</li>
+            <li>Creatine 3–5 g — daily (post-workout)</li>
+            <li>Pea Protein — post-workout</li>
+          </ul>
+        </div>
+        <div class="card" style="flex:1;min-width:260px">
+          <h3>Tracking</h3>
+          <ul style="color:var(--muted);margin:6px 0 0 18px">
+            <li>Photos every 2 weeks</li>
+            <li>Record lifts & measurements monthly</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
-      <div class="card">
-        <div class="search">
-          <input id="searchBox" type="text" placeholder="Search exercise (e.g. Lat Pulldown, Pec Deck)..." oninput="filterTutorials()" />
+    <!-- MUSIC -->
+    <section id="music" class="card" style="margin-top:18px">
+      <h2 class="page-title">Music</h2>
+
+      <div class="card music-player">
+        <div style="display:flex; gap:18px; align-items:center; flex-wrap:wrap; width:100%">
+          <div class="player-controls">
+            <div style="display:flex; gap:8px; align-items:center;">
+              <button class="btn" id="playBtn" onclick="togglePlay()">▶ Play / Pause</button>
+              <button class="btn small" onclick="prevTrack()">⏮ Prev</button>
+              <button class="btn small" onclick="nextTrack()">⏭ Next</button>
+            </div>
+            <div class="player-status" id="playerStatus">Click Play to start (no autoplay)</div>
+            <audio id="audio" preload="auto" style="margin-top:10px"></audio>
+          </div>
+
+          <div class="playlist" id="playlist">
+            <div style="font-weight:800;color:var(--accent);margin-bottom:8px">Playlist</div>
+            <div id="tracksList" style="display:flex;flex-direction:column;gap:8px">
+              <!-- Edit names below or change file names in script -->
+              <div id="t0" class="track" onclick="selectTrack(0)">1 — Badmashi</div>
+              <div id="t1" class="track" onclick="selectTrack(1)">2 — Jaat Flow</div>
+              <div id="t2" class="track" onclick="selectTrack(2)">3 — Neffex Go</div>
+              <div id="t3" class="track" onclick="selectTrack(3)">4 — I Guess</div>
+              <div id="t4" class="track" onclick="selectTrack(4)">5 — Phonks</div>
+            </div>
+          </div>
         </div>
 
-        <div id="tutsContainer">
-          <!-- existing embedded tutorials kept identical -->
-          <div class="tutorial" data-title="Pec Deck">
-            <iframe class="yt" src="https://www.youtube.com/embed/xYNONVD-VCA?si=gug3h5vcnO7ceaIW" allowfullscreen></iframe>
-            <div class="tutorial-title">Pec Deck</div>
-          </div>
-
-          <div class="tutorial" data-title="Bar Dips">
-            <iframe class="yt" src="https://www.youtube.com/embed/1_4OICx2WrY" allowfullscreen></iframe>
-            <div class="tutorial-title">Bar Dips</div>
-          </div>
-
-          <div class="tutorial" data-title="Triceps Pushdown">
-            <iframe class="yt" src="https://www.youtube.com/embed/Rc7-euA8FDI" allowfullscreen></iframe>
-            <div class="tutorial-title">Triceps Pushdown</div>
-          </div>
-
-          <div class="tutorial" data-title="Overhead Triceps Extension">
-            <iframe class="yt" src="https://www.youtube.com/embed/9Ark9S11uXw" allowfullscreen></iframe>
-            <div class="tutorial-title">Overhead Triceps Extension</div>
-          </div>
-
-          <div class="tutorial" data-title="Hanging Leg Raise">
-            <iframe class="yt" src="https://www.youtube.com/embed/XQc0WHO90Lk?si=2PJmTV4CFUdU3ubN" allowfullscreen></iframe>
-            <div class="tutorial-title">Hanging Leg Raise</div>
-          </div>
-
-          <div class="tutorial" data-title="Lat Pulldown">
-            <iframe class="yt" src="https://www.youtube.com/embed/z-lxcsIN4T4" allowfullscreen></iframe>
-            <div class="tutorial-title">Lat Pulldown</div>
-          </div>
-
-          <div class="tutorial" data-title="Barbell Row">
-            <iframe class="yt" src="https://www.youtube.com/embed/phVtqawIgbk" allowfullscreen></iframe>
-            <div class="tutorial-title">Barbell Row</div>
-          </div>
-
-          <div class="tutorial" data-title="Seated Cable Row">
-            <iframe class="yt" src="https://www.youtube.com/embed/qD1WZ5pSuvk" allowfullscreen></iframe>
-            <div class="tutorial-title">Seated Cable Row</div>
-          </div>
-
-          <div class="tutorial" data-title="Face Pulls">
-            <iframe class="yt" src="https://www.youtube.com/embed/IeOqdw9WI90" allowfullscreen></iframe>
-            <div class="tutorial-title">Face Pulls</div>
-          </div>
-
-          <div class="tutorial" data-title="Plank">
-            <iframe class="yt" src="https://www.youtube.com/embed/xe2MXatLTUw?si=8aDxegS8WJy2fgQE" allowfullscreen></iframe>
-            <div class="tutorial-title">Plank</div>
-          </div>
-
-          <div class="tutorial" data-title="Back Squat">
-            <iframe class="yt" src="https://www.youtube.com/embed/Ak1iHbEeeY8" allowfullscreen></iframe>
-            <div class="tutorial-title">Back Squat</div>
-          </div>
-
-          <div class="tutorial" data-title="Walking Lunges">
-            <iframe class="yt" src="https://www.youtube.com/embed/tQNktxPkSeE?si=op-IS3f2IR5HM-rK" allowfullscreen></iframe>
-            <div class="tutorial-title">Walking Lunges</div>
-          </div>
-
-          <div class="tutorial" data-title="Leg Extension">
-            <iframe class="yt" src="https://www.youtube.com/embed/d3d2yz7V26c" allowfullscreen></iframe>
-            <div class="tutorial-title">Leg Extension</div>
-          </div>
-
-          <div class="tutorial" data-title="Cable Crunch">
-            <iframe class="yt" src="https://www.youtube.com/embed/K2m0jj6RfYg" allowfullscreen></iframe>
-            <div class="tutorial-title">Cable Crunch</div>
-          </div>
-
-          <div class="tutorial" data-title="Overhead Press">
-            <iframe class="yt" src="https://www.youtube.com/embed/k6tzKisR3NY" allowfullscreen></iframe>
-            <div class="tutorial-title">Overhead Press</div>
-          </div>
-
-          <div class="tutorial" data-title="Dumbbell Lateral Raises">
-            <iframe class="yt" src="https://www.youtube.com/embed/Kl3LEzQ5Zqs" allowfullscreen></iframe>
-            <div class="tutorial-title">Dumbbell Lateral Raises</div>
-          </div>
-
-          <div class="tutorial" data-title="Arnold Press">
-            <iframe class="yt" src="https://www.youtube.com/embed/7X8ziWLB06s" allowfullscreen></iframe>
-            <div class="tutorial-title">Arnold Press</div>
-          </div>
-
-          <div class="tutorial" data-title="Rear Delt Fly">
-            <iframe class="yt" src="https://www.youtube.com/embed/Y59M5fXn8bs?si=sBWcjKWp7T2go44b" allowfullscreen></iframe>
-            <div class="tutorial-title">Rear Delt Fly</div>
-          </div>
-
-          <div class="tutorial" data-title="Shrugs">
-            <iframe class="yt" src="https://www.youtube.com/embed/rFsSeClGnNA" allowfullscreen></iframe>
-            <div class="tutorial-title">Shrugs</div>
-          </div>
-
-          <div class="tutorial" data-title="Russian Twists">
-            <iframe class="yt" src="https://www.youtube.com/embed/aRUMRbl7KS4" allowfullscreen></iframe>
-            <div class="tutorial-title">Russian Twists</div>
-          </div>
-
-          <div class="tutorial" data-title="Chest Supported Row">
-            <iframe class="yt" src="https://www.youtube.com/embed/-avLxYko1k0" allowfullscreen></iframe>
-            <div class="tutorial-title">Chest Supported Row</div>
-          </div>
-
-          <div class="tutorial" data-title="Preacher Curl">
-            <iframe class="yt" src="https://www.youtube.com/embed/LUBgyjKCRWQ" allowfullscreen></iframe>
-            <div class="tutorial-title">Preacher Curl</div>
-          </div>
-
-          <div class="tutorial" data-title="Romanian Deadlift">
-            <iframe class="yt" src="https://www.youtube.com/embed/Wou9zVQrAfs" allowfullscreen></iframe>
-            <div class="tutorial-title">Romanian Deadlift</div>
-          </div>
-
-          <div class="tutorial" data-title="Hip Thrusts">
-            <iframe class="yt" src="https://www.youtube.com/embed/96uDbymTaHM" allowfullscreen></iframe>
-            <div class="tutorial-title">Hip Thrusts</div>
-          </div>
-
-          <div class="tutorial" data-title="Bulgarian Split Squat">
-            <iframe class="yt" src="https://www.youtube.com/embed/or1frhkjBDc" allowfullscreen></iframe>
-            <div class="tutorial-title">Bulgarian Split Squat</div>
-          </div>
-
+        <div style="margin-top:12px;color:var(--muted);font-size:13px">
+          Note: Put your local .mp3 files in the same folder as this HTML. Edit track file names inside the script if needed.
         </div>
       </div>
     </section>
   </main>
 
   <script>
-    // default view
-    document.getElementById('diet').classList.add('active');
-
-    // navigation
-    function show(sectionId, btnElem){
-      // hide all section elements visually
-      document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
-      document.getElementById(sectionId).classList.add('active');
-      // active button styling
+    /* Smooth active nav highlighting + scrolling */
+    function scrollToId(id, btn){
       document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-      if(btnElem) btnElem.classList.add('active');
-      // update scroll to top of main
-      window.scrollTo(0,0);
+      if(btn) btn.classList.add('active');
+      document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
     }
 
-    // TUTORIALS search
-    function filterTutorials(){
-      const q = document.getElementById('searchBox').value.trim().toLowerCase();
-      document.querySelectorAll('#tutsContainer .tutorial').forEach(card=>{
-        const title = card.getAttribute('data-title').toLowerCase();
-        card.style.display = (title.includes(q) ? 'block' : 'none');
-      });
-    }
-
-    // MUSIC player logic (single audio + prev/next)
-    const playlist = [
-      {file: 'track1.mp3', name: 'Badmashi'},
-      {file: 'track2.mp3', name: 'Jaat Flow'},
-      {file: 'track3.mp3', name: 'Neffex Go'},
-      {file: 'track4.mp3', name: 'I Guess'},
-      {file: 'track5.mp3', name: 'Phonks'}
-    ];
-    let current = 0;
+    /* --- MUSIC PLAYER LOGIC --- */
     const audio = document.getElementById('audio');
     const status = document.getElementById('playerStatus');
+    const ringPulse = document.getElementById('ringPulse');
+    const ringIdle = document.getElementById('ringIdle');
 
+    // Local track files (put the .mp3 files in same folder)
+    // Change the filenames below to match your files
+    const tracks = [
+      'badmashi.mp3',
+      'jaatflow.mp3',
+      'neffex_go.mp3',
+      'iguess.mp3',
+      'phonks.mp3'
+    ];
+    // Optional: readable titles shown in playlist (order must match tracks[])
+    const titles = [
+      'Badmashi',
+      'Jaat Flow',
+      'Neffex Go',
+      'I Guess',
+      'Phonks'
+    ];
+
+    let current = 0;
     function loadTrack(i){
-      current = (i + playlist.length) % playlist.length;
-      audio.src = playlist[current].file;
-      highlightPlaylist(current);
-      status.textContent = `Now loaded: ${playlist[current].name} (${current+1}/${playlist.length}) — press Play`;
+      if(i < 0) i = tracks.length - 1;
+      if(i >= tracks.length) i = 0;
+      current = i;
+      audio.src = tracks[current];
+      audio.load();
+      updateUI();
+      status.textContent = 'Loaded: ' + titles[current];
     }
 
     function togglePlay(){
       if(!audio.src) loadTrack(current);
-      if(audio.paused) {
-        audio.play().catch(()=>{ status.textContent = 'Autoplay blocked — click Play again or interact with page.'; });
-        status.textContent = `Playing: ${playlist[current].name}`;
+      if(audio.paused){
+        audio.play().then(()=> {
+          status.textContent = 'Playing: ' + titles[current];
+          startPulse();
+        }).catch(err => {
+          status.textContent = 'Play blocked by browser — click anywhere then press Play';
+        });
       } else {
         audio.pause();
-        status.textContent = `Paused: ${playlist[current].name}`;
+        status.textContent = 'Paused';
+        stopPulse();
       }
     }
 
     function nextTrack(){
-      loadTrack(current+1);
-      audio.play().catch(()=>{ status.textContent = 'Autoplay blocked — press Play.'; });
+      loadTrack(current + 1);
+      audio.play().then(()=> {
+        status.textContent = 'Playing: ' + titles[current];
+        startPulse();
+      }).catch(()=>{ status.textContent = 'Play blocked — press Play'; });
     }
+
     function prevTrack(){
-      loadTrack(current-1);
-      audio.play().catch(()=>{ status.textContent = 'Autoplay blocked — press Play.'; });
+      loadTrack(current - 1);
+      audio.play().then(()=> {
+        status.textContent = 'Playing: ' + titles[current];
+        startPulse();
+      }).catch(()=>{ status.textContent = 'Play blocked — press Play'; });
     }
 
-    function highlightPlaylist(idx){
-      for(let i=0;i<playlist.length;i++){
-        const el = document.getElementById('t'+i);
-        if(el) el.style.background = (i===idx ? 'rgba(31,182,255,0.08)' : 'rgba(255,255,255,0.01)');
-      }
+    function selectTrack(i){
+      loadTrack(i);
+      audio.play().then(()=> {
+        status.textContent = 'Playing: ' + titles[current];
+        startPulse();
+      }).catch(()=>{ status.textContent = 'Play blocked — press Play'; });
     }
 
-    // initialize
-    loadTrack(0);
+    function updateUI(){
+      // highlight playlist items
+      document.querySelectorAll('.track').forEach((el, idx) => {
+        el.classList.toggle('playing', idx === current);
+      });
+    }
 
-    // progress -> auto next when ended
+    function startPulse(){
+      ringPulse.style.display = 'block';
+      ringIdle.style.display = 'none';
+      document.querySelectorAll('.track').forEach((el, idx) => {
+        el.style.opacity = idx === current ? '1' : '0.8';
+      });
+    }
+
+    function stopPulse(){
+      ringPulse.style.display = 'none';
+      ringIdle.style.display = 'block';
+    }
+
+    // Auto-next when track ends
     audio.addEventListener('ended', ()=>{ nextTrack(); });
 
-    // Show first section by default
-    document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
-    document.getElementById('diet').classList.add('active');
+    // Preload first track visual
+    loadTrack(0);
 
-    // helper: connect search box to filter on key
-    document.getElementById('searchBox')?.addEventListener('input', filterTutorials);
+    // Mobile tip: enable play after first user interaction if browser blocks
+    document.body.addEventListener('click', ()=> {
+      // no-op; keeps browser interaction registered for autoplay policies
+    }, {once:true});
   </script>
 </body>
 </html>
-
-
-
