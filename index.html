@@ -1,8 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
+// PDF helpers require these packages in your project:
+// npm install jspdf html2canvas
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
-// NOTE: This component expects Tailwind CSS to be configured in the project.
-// Dependencies: react, react-dom, react-router-dom, tailwindcss (optional but recommended)
+// Single-file React SPA: Sylarx | Baki Mode — 3-Month Discipline Transformation
+// Notes: Tailwind classes are used for convenience but not required.
 
 export default function App() {
   return (
@@ -11,6 +15,7 @@ export default function App() {
         <div className="flex">
           <Sidebar />
           <main className="flex-1 p-8 md:p-12">
+            <div className="mb-6 text-sm text-[#bdbdbd]">Sylarx | Baki Mode — 3-Month Discipline Transformation</div>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/workout" element={<Workout />} />
@@ -104,7 +109,7 @@ function Workout() {
         <p className="text-[#bdbdbd] mt-2">You train 6 days/week. Focus on progressive overload and clean form (you already know form — increase loads gradually).</p>
       </Card>
 
-      <Card>
+      <Card id="workout-checklist-dark">
         <h3 className="text-[#FF4D4D]">Phase 1 — Foundation (Dec–Feb)</h3>
         <pre className="workout whitespace-pre-wrap text-sm mt-3 text-[#eef6fb]">{`Structure: 6 days (Push / Pull / Legs) — moderate volume, learn tempo and control.
 
@@ -154,11 +159,14 @@ SAT – Legs (Hamstrings & Glutes)
 
 SUN – Rest / Active recovery
 `}</pre>
+        <div style={{display:'flex',gap:12,marginTop:12}}>
+          <button onClick={() => makeWorkoutChecklistPDF('workout-checklist-dark','workout-dark.pdf','workout-white.pdf')} className="btn">Download Checklists (Dark & White)</button>
+        </div>
       </Card>
 
       <Card>
         <h3 className="text-[#FF4D4D]">Phase 2 — Growth & Volume (Mar–May)</h3>
-        <pre className="workout whitespace-pre-wrap text-sm mt-3 text-[#eef6fb']">{`Structure: Increase weekly volume & intensity. Add 1–2 intensity techniques (drop sets, short-rest supersets).
+        <pre className="workout whitespace-pre-wrap text-sm mt-3 text-[#eef6fb]">{`Structure: Increase weekly volume & intensity. Add 1–2 intensity techniques (drop sets, short-rest supersets).
 - Train same split but slightly higher reps (8–12) and occasional supersets.
 - Add 10–20% calories (clean surplus) and keep protein high.
 - Continue creatine + EAA; track weekly measurements.`}</pre>
@@ -178,37 +186,41 @@ SUN – Rest / Active recovery
 function Diet() {
   return (
     <div className="ml-0 md:ml-72">
-      <Card>
+      <Card id="diet-checklist-dark">
         <h2 className="text-2xl font-bold">Winter Lean Muscle Diet — Eggetarian</h2>
         <p className="text-[#bdbdbd] mt-2">Clean, warm meals suitable for the winter months — keep protein high and include good fats for joint & skin health.</p>
+
+        <div className="grid md:grid-cols-2 gap-6 mt-4">
+          <Card>
+            <h3 className="text-[#FF4D4D]">Daily Meal Structure</h3>
+            <ul className="list-disc list-inside mt-3 text-[#bdbdbd]">
+              <li>Morning: Warm water + lemon + 5 soaked almonds + 1 walnut</li>
+              <li>Breakfast: Oats 50 g + 1 banana + 1 tbsp peanut butter + 1 scoop pea protein (warm milk)</li>
+              <li>Midday snack: 2 boiled eggs or roasted chana</li>
+              <li>Lunch: 2 rotis + rice + dal/rajma/chole + paneer/tofu + veggies + 1 tsp ghee</li>
+              <li>Pre-workout: Banana + peanut butter + optional black coffee (30–45 min before)</li>
+              <li>Post-workout: Pea protein + 3–5 g creatine + quick carbs (banana / brown bread)</li>
+              <li>Dinner: Rotis + paneer/tofu/dal + cooked vegetables; warm milk optional before bed</li>
+            </ul>
+          </Card>
+
+          <Card>
+            <h3 className="text-[#FF4D4D]">Supplements & Notes</h3>
+            <ul className="list-disc list-inside mt-3 text-[#bdbdbd]">
+              <li>Multivitamin: with breakfast (HK Vitals)</li>
+              <li>Fish Oil: with lunch (HK Vitals)</li>
+              <li>Creatine: 3–5 g daily – mix with post-workout shake</li>
+              <li>Pea Protein: post-workout and as needed to hit protein target</li>
+              <li>EAA: intra-workout or pre-workout as needed</li>
+              <li>Hydration: 3–3.5 L/day; Sleep 7–8 hrs</li>
+            </ul>
+          </Card>
+        </div>
+
+        <div style={{display:'flex',gap:12,marginTop:12}}>
+          <button onClick={() => makeDietChecklistPDF('diet-checklist-dark','diet-dark.pdf','diet-white.pdf')} className="btn">Download Diet Checklists (Dark & White)</button>
+        </div>
       </Card>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card>
-          <h3 className="text-[#FF4D4D]">Daily Meal Structure</h3>
-          <ul className="list-disc list-inside mt-3 text-[#bdbdbd]">
-            <li>Morning: Warm water + lemon + 5 soaked almonds + 1 walnut</li>
-            <li>Breakfast: Oats 50 g + 1 banana + 1 tbsp peanut butter + 1 scoop pea protein (warm milk)</li>
-            <li>Midday snack: 2 boiled eggs or roasted chana</li>
-            <li>Lunch: 2 rotis + rice + dal/rajma/chole + paneer/tofu + veggies + 1 tsp ghee</li>
-            <li>Pre-workout: Banana + peanut butter + optional black coffee (30–45 min before)</li>
-            <li>Post-workout: Pea protein + 3–5 g creatine + quick carbs (banana / brown bread)</li>
-            <li>Dinner: Rotis + paneer/tofu/dal + cooked vegetables; warm milk optional before bed</li>
-          </ul>
-        </Card>
-
-        <Card>
-          <h3 className="text-[#FF4D4D]">Supplements & Notes</h3>
-          <ul className="list-disc list-inside mt-3 text-[#bdbdbd]">
-            <li>Multivitamin: with breakfast (HK Vitals)</li>
-            <li>Fish Oil: with lunch (HK Vitals)</li>
-            <li>Creatine: 3–5 g daily – mix with post-workout shake</li>
-            <li>Pea Protein: post-workout and as needed to hit protein target</li>
-            <li>EAA: intra-workout or pre-workout as needed</li>
-            <li>Hydration: 3–3.5 L/day; Sleep 7–8 hrs</li>
-          </ul>
-        </Card>
-      </div>
 
       <Card>
         <h3 className="text-[#FF4D4D]">Weekend Meal Prep Tips</h3>
@@ -235,7 +247,7 @@ function Notes() {
         <Card>
           <h3 className="text-[#FF4D4D]">Key Rules</h3>
           <ul className="list-disc list-inside mt-3 text-[#bdbdbd]">
-            <li>Discipline > Motivation — follow plan consistently.</li>
+            <li>Discipline &gt; Motivation — follow plan consistently.</li>
             <li>Track photos every 2 weeks and measurements monthly.</li>
             <li>Aim for 1.6–2 g protein/kg/day.</li>
             <li>Limit junk food — 90% clean, 1 cheat meal/week.</li>
@@ -256,83 +268,41 @@ function Notes() {
   );
 }
 
-function Music() {
-  // audio player logic similar to previous working JS
-  const audioRef = useRef(null);
-  const [current, setCurrent] = useState(0);
-  const [playing, setPlaying] = useState(false);
+// ------------------ PDF CHECKLIST HELPERS ------------------
+// Uses jsPDF + html2canvas. These functions are simple helpers that clone the DOM
+// node and produce two PDFs: dark (site look) and white (print-friendly).
 
-  // Put your local mp3 file names here (must be in /public or served alongside app)
-  const tracks = [
-    'badmashi.mp3',
-    'jaatflow.mp3',
-    'neffex_go.mp3',
-    'iguess.mp3',
-    'phonks.mp3'
-  ];
-  const titles = ['Badmashi','Jaat Flow','Neffex Go','I Guess','Phonks'];
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    const handleEnded = () => nextTrack();
-    audio && audio.addEventListener('ended', handleEnded);
-    return () => audio && audio.removeEventListener('ended', handleEnded);
-  }, [current]);
-
-  function loadTrack(i){
-    if(i < 0) i = tracks.length - 1;
-    if(i >= tracks.length) i = 0;
-    setCurrent(i);
-    if(audioRef.current){
-      audioRef.current.src = tracks[i];
-      audioRef.current.load();
-    }
-  }
-  function togglePlay(){
-    if(!audioRef.current.src) loadTrack(current);
-    if(audioRef.current.paused){
-      audioRef.current.play().then(()=>{ setPlaying(true); }).catch(()=>{ /* play blocked */ });
-    } else {
-      audioRef.current.pause(); setPlaying(false);
-    }
-  }
-  function nextTrack(){ loadTrack(current+1); setTimeout(()=>{ audioRef.current.play().then(()=>setPlaying(true)).catch(()=>{}); }, 120); }
-  function prevTrack(){ loadTrack(current-1); setTimeout(()=>{ audioRef.current.play().then(()=>setPlaying(true)).catch(()=>{}); }, 120); }
-  function selectTrack(i){ loadTrack(i); setTimeout(()=>{ audioRef.current.play().then(()=>setPlaying(true)).catch(()=>{}); }, 120); }
-
-  useEffect(()=>{ // update document title lightly
-    document.title = `Sylarx | Baki Mode${playing ? ' — Playing '+titles[current] : ''}`;
-  }, [playing, current]);
-
-  return (
-    <div className="ml-0 md:ml-72">
-      <Card>
-        <h2 className="text-2xl font-bold">Music Player</h2>
-        <p className="text-[#bdbdbd] mt-2">Click Play to start. Place your mp3 files in the public folder or alongside your built files, and edit the tracks[] list above if filenames differ.</p>
-      </Card>
-
-      <Card>
-        <div className="flex flex-col md:flex-row gap-6 items-start">
-          <div className="player-controls flex-1">
-            <div className="flex gap-3 items-center">
-              <button onClick={togglePlay} className="btn">{playing ? '❚❚ Pause' : '▶ Play'}</button>
-              <button onClick={prevTrack} className="btn small">⏮ Prev</button>
-              <button onClick={nextTrack} className="btn small">⏭ Next</button>
-            </div>
-            <div className="player-status text-[#bdbdbd] mt-3">{playing ? 'Playing: '+titles[current] : 'Loaded: '+titles[current]}</div>
-            <audio ref={audioRef} preload="auto" className="mt-4" />
-          </div>
-
-          <div className="playlist w-full md:w-80">
-            <div className="font-semibold text-[#FF4D4D] mb-3">Playlist</div>
-            <div className="flex flex-col gap-2">
-              {titles.map((t, i) => (
-                <div key={i} onClick={()=>selectTrack(i)} className={`track ${current===i && playing ? 'playing' : ''}`}>{i+1} — {t}</div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Card>
-    </div>
-  );
+function downloadPDF(element, filename){
+  return html2canvas(element, {scale:2, useCORS:true}).then(canvas => {
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save(filename);
+  });
 }
+
+function makeWorkoutChecklistPDF(workoutHtmlId, filenameDark, filenameWhite){
+  const el = document.getElementById(workoutHtmlId);
+  if(!el) return Promise.reject(new Error('Workout element not found'));
+  // dark version
+  return downloadPDF(el, filenameDark).then(()=>{
+    // white version: clone & restyle
+    const clone = el.cloneNode(true);
+    clone.style.background = '#ffffff';
+    clone.querySelectorAll('*').forEach(n => n.style.color = '#000000');
+    clone.style.padding = '24px';
+    clone.style.width = '794px';
+    clone.style.boxSizing = 'border-box';
+    document.body.appendChild(clone);
+    return downloadPDF(clone, filenameWhite).then(()=>{ document.body.removeChild(clone); });
+  });
+}
+
+function makeDietChecklistPDF(dietHtmlId, filenameDark, filenameWhite){
+  return makeWorkoutChecklistPDF(dietHtmlId, filenameDark, filenameWhite);
+}
+
+export { makeWorkoutChecklistPDF, makeDietChecklistPDF };
