@@ -1,370 +1,338 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sylarx | Baki Mode</title>
-  <meta name="description" content="Sylarx | Baki Mode — training, diet, music" />
-  <style>
-    :root{
-      --bg-0: #020203;
-      --bg-1: #070707;
-      --panel: #0f0f10;
-      --card: #121214;
-      --muted: #bdbdbd;
-      --accent: #FF4D4D; /* red accent */
-      --text: #f2f6f8;
-      --glow: 0 0 40px rgba(255,77,77,0.12), 0 0 120px rgba(255,77,77,0.05);
-    }
+import React, { useState, useRef, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
 
-    /* Base */
-    *{box-sizing:border-box}
-    html,body{height:100%; margin:0; font-family:Inter,Segoe UI,Roboto,Arial,sans-serif; color:var(--text); background:radial-gradient(ellipse at center, rgba(255,77,77,0.03) 0%, transparent 20%), linear-gradient(180deg,var(--bg-0),var(--bg-1)); -webkit-font-smoothing:antialiased}
-    a{color:inherit; text-decoration:none}
-    main{margin-left:280px; padding:28px; min-height:100vh}
+// NOTE: This component expects Tailwind CSS to be configured in the project.
+// Dependencies: react, react-dom, react-router-dom, tailwindcss (optional but recommended)
 
-    /* Sidebar */
-    .side{
-      width:280px; position:fixed; left:0; top:0; bottom:0;
-      background:linear-gradient(180deg, rgba(20,6,6,0.85), rgba(10,6,6,0.9));
-      border-right:1px solid rgba(255,255,255,0.03); padding:28px 20px; display:flex; flex-direction:column; gap:14px;
-      box-shadow: var(--glow);
-    }
-    .brand{font-weight:900; color:var(--accent); font-size:24px; letter-spacing:0.6px}
-    .subtitle{color:var(--muted); font-size:13px}
-    .nav{display:flex; flex-direction:column; gap:10px; margin-top:8px}
-    .nav button{
-      background:transparent; color:var(--text); border:1px solid rgba(255,255,255,0.03); padding:10px 12px;
-      text-align:left; font-weight:800; border-radius:10px; cursor:pointer; font-size:15px; transition:all .18s;
-    }
-    .nav button.active{background:rgba(255,77,77,0.06); box-shadow:0 8px 28px rgba(255,77,77,0.04); transform:translateY(-2px)}
+export default function App() {
+  return (
+    <Router>
+      <div className="min-h-screen bg-gradient-to-b from-[#020203] via-[#070707] to-[#0b0d10] text-[#eef6fb] font-sans">
+        <div className="flex">
+          <Sidebar />
+          <main className="flex-1 p-8 md:p-12">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/workout" element={<Workout />} />
+              <Route path="/diet" element={<Diet />} />
+              <Route path="/notes" element={<Notes />} />
+              <Route path="/music" element={<Music />} />
+            </Routes>
+          </main>
+        </div>
+      </div>
+    </Router>
+  );
+}
 
-    /* top small info */
-    .meta{margin-top:auto; font-size:12px; color:var(--muted)}
+function Sidebar() {
+  const links = [
+    { to: "/", label: "Home" },
+    { to: "/workout", label: "Workout Plan" },
+    { to: "/diet", label: "Diet Plan" },
+    { to: "/notes", label: "Transformation Notes" },
+    { to: "/music", label: "Music" }
+  ];
+  const location = useLocation();
 
-    /* Header / page title */
-    .page-title{font-size:28px; margin:0 0 14px; color:var(--text); display:flex; align-items:center; gap:12px}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.015)); border:1px solid rgba(255,255,255,0.03); border-radius:12px; padding:18px; margin-bottom:16px; box-shadow: 0 6px 24px rgba(0,0,0,0.6)}
-    .row{display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap}
+  return (
+    <aside className="w-72 fixed left-0 top-0 bottom-0 p-8 bg-gradient-to-b from-[#140606cc] to-[#0a0606e6] border-r border-white/5 shadow-[0_0_40px_rgba(255,77,77,0.12)]">
+      <div className="text-2xl font-extrabold text-[#FF4D4D]">Sylarx | Baki Mode</div>
+      <div className="text-sm text-[#bdbdbd] mt-2">Intense trainer • Teen-safe hypertrophy</div>
 
-    /* Placeholders and headings */
-    h3{margin:0 0 8px; color:var(--accent)}
-    p.lead{color:var(--muted); margin:0 0 12px}
+      <nav className="mt-6 flex flex-col gap-3">
+        {links.map((l) => (
+          <Link
+            key={l.to}
+            to={l.to}
+            className={`text-left px-3 py-2 rounded-md font-semibold border border-white/5 transition-all ${location.pathname === l.to ? 'bg-[#FF4D4D0A] ring-2 ring-[#FF4D4D22] transform -translate-y-0.5' : 'hover:bg-white/2'}`}>
+            {l.label}
+          </Link>
+        ))}
+      </nav>
 
-    /* two column meal grid */
-    .meals{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px}
-    .meal{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008)); border-left:6px solid rgba(255,77,77,0.9); padding:14px; border-radius:8px}
-    .meal ul{margin:6px 0 0 18px; color:var(--muted)}
+      <div className="mt-auto text-xs text-[#bdbdbd]">
+        <div>Gym timing: 5:00 PM — 7:00 PM</div>
+        <div className="mt-2">Contact: op840809@gmail.com</div>
+      </div>
+    </aside>
+  );
+}
 
-    /* workout pre block */
-    pre.workout{background:rgba(255,255,255,0.01); padding:14px; border-radius:10px; color:var(--text); font-size:14px; line-height:1.6; overflow:auto; border:1px solid rgba(255,255,255,0.02)}
-
-    /* music player */
-    .music-player{display:flex; gap:18px; align-items:center; flex-wrap:wrap}
-    .player-controls{min-width:320px; flex:1}
-    .player-controls .btn{background:var(--accent); color:#0b0b0b; border:none; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:800; box-shadow:0 6px 18px rgba(255,77,77,0.08)}
-    .player-controls .btn.small{padding:8px 10px; font-weight:700}
-    .player-status{color:var(--muted); margin-top:8px; font-size:14px}
-    .playlist{min-width:280px; background:rgba(255,255,255,0.01); border-radius:8px; padding:10px; border:1px solid rgba(255,255,255,0.02)}
-    .track{padding:8px;border-radius:6px;background:rgba(255,255,255,0.01);cursor:pointer;transition:all .15s;color:var(--muted);font-weight:700}
-    .track:hover{transform:translateX(6px); background:rgba(255,255,255,0.03)}
-    .track.playing{background:linear-gradient(90deg, rgba(255,77,77,0.12), rgba(255,77,77,0.06)); color:var(--accent); box-shadow: var(--glow);}
-
-    /* Now playing glow ring */
-    .now-playing-ring{
-      width:56px;height:56px;border-radius:50%;background:linear-gradient(180deg, rgba(255,77,77,0.14), rgba(255,77,77,0.06));
-      display:flex; align-items:center; justify-content:center; box-shadow: 0 6px 28px rgba(255,77,77,0.06); transition:all .18s;
-    }
-    .pulse { 
-      width:12px;height:12px;border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); animation: pulse 1s infinite;
-    }
-    @keyframes pulse {
-      0% { transform:scale(1); opacity:1}
-      50% { transform:scale(1.65); opacity:0.6}
-      100% { transform:scale(1); opacity:1}
-    }
-
-    /* small screens */
-    @media (max-width:980px){
-      .side{transform:translateX(-100%); position:fixed; z-index:50; transition:transform .18s}
-      .side.open{transform:none}
-      main{margin-left:0; padding:18px}
-      .meals{grid-template-columns:1fr}
-      .player-controls{min-width:0}
-    }
-  </style>
-</head>
-<body>
-
-  <!-- SIDEBAR -->
-  <aside class="side" id="sidebar">
-    <div class="brand">Sylarx | Baki Mode</div>
-    <div class="subtitle">Intense trainer • Teen-safe hypertrophy</div>
-
-    <nav class="nav" aria-label="Main navigation">
-      <button onclick="scrollToId('home', this)" class="active">Home</button>
-      <button onclick="scrollToId('workout', this)">Workout Plan</button>
-      <button onclick="scrollToId('diet', this)">Diet Plan</button>
-      <button onclick="scrollToId('notes', this)">Transformation Notes</button>
-      <button onclick="scrollToId('music', this)">Music</button>
-    </nav>
-
-    <div class="meta">
-      <div style="margin-top:14px; font-size:13px; color:var(--muted)">Gym timing: 5:00 PM — 7:00 PM</div>
-      <div style="margin-top:10px; font-size:12px; color:var(--muted)">Contact: op840809@gmail.com</div>
+function Card({ children, className = '' }) {
+  return (
+    <div className={`bg-[rgba(255,255,255,0.02)] border border-white/5 rounded-xl p-6 mb-6 shadow-[0_6px_24px_rgba(0,0,0,0.6)] ${className}`}>
+      {children}
     </div>
-  </aside>
+  );
+}
 
-  <!-- MAIN -->
-  <main id="main">
-    <!-- HOME -->
-    <section id="home" class="card">
-      <h1 class="page-title">Welcome — Sylarx Baki Mode</h1>
-      <p class="lead">This page is your training hub. Quick links on left. Use the Music player while you train. Workout & diet content placeholders are ready to fill.</p>
-      <div class="row">
-        <div class="card" style="flex:1;min-width:260px">
-          <h3>Quick Start</h3>
-          <ul style="color:var(--muted);margin:6px 0 0 18px">
-            <li>Follow consistent training 6 days/week.</li>
-            <li>Protein target ~1.6–2 g/kg bodyweight.</li>
-            <li>Sleep 7–8 hours. Hydrate 3–3.5 L/day.</li>
+function Home() {
+  return (
+    <div className="ml-0 md:ml-72">
+      <Card>
+        <h1 className="text-3xl font-bold">Welcome — Sylarx Baki Mode</h1>
+        <p className="text-[#bdbdbd] mt-2">This training hub contains your Workout, Diet and Notes pages. Use the Music page to play local tracks during training.</p>
+      </Card>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card>
+          <h3 className="text-[#FF4D4D]">Quick Start</h3>
+          <ul className="mt-3 text-[#bdbdbd] list-disc list-inside">
+            <li>Follow consistent training 6 days/week (Push/Pull/Legs split).</li>
+            <li>Hit protein target ~1.6–2 g/kg bodyweight (110–140 g/day approx.).</li>
+            <li>Sleep 7–8 hours nightly. Hydrate 3–3.5 L/day.</li>
           </ul>
-        </div>
+        </Card>
 
-        <div class="card" style="width:220px;display:flex;flex-direction:column;align-items:center;justify-content:center">
-          <div class="now-playing-ring" id="ring" title="Now playing">
-            <div id="ringPulse" style="display:none" class="pulse"></div>
-            <div id="ringIdle" style="color:var(--muted); font-weight:800; font-size:12px">Baki</div>
+        <Card className="flex flex-col items-center justify-center">
+          <div className="w-14 h-14 rounded-full bg-gradient-to-b from-[#FF4D4D22] to-[#FF4D4D0F] flex items-center justify-center shadow-[0_6px_28px_rgba(255,77,77,0.06)]">
+            <div className="w-3 h-3 rounded-full bg-[#FF4D4D] animate-pulse" />
           </div>
-          <div style="margin-top:10px;color:var(--muted);font-size:13px">Aura: Neon Red</div>
-        </div>
+          <div className="text-sm text-[#bdbdbd] mt-2">Aura: Neon Red</div>
+        </Card>
       </div>
-    </section>
+    </div>
+  );
+}
 
-    <!-- WORKOUT -->
-    <section id="workout" class="card" style="margin-top:18px">
-      <h2 class="page-title">Workout Plan</h2>
-      <p class="lead">Placeholder: Add your full training routines here (Push / Pull / Legs, progress notes). Keep sets, reps, rest times and tempo.</p>
+function Workout() {
+  return (
+    <div className="ml-0 md:ml-72">
+      <Card>
+        <h2 className="text-2xl font-bold">Transformation Workout — Winter Edition (3 Phases)</h2>
+        <p className="text-[#bdbdbd] mt-2">You train 6 days/week. Focus on progressive overload and clean form (you already know form — increase loads gradually).</p>
+      </Card>
 
-      <!-- Example placeholder structure -->
-      <div class="row">
-        <div class="card" style="flex:1;min-width:260px">
-          <h3>Phase 1 — Foundation</h3>
-          <p style="color:var(--muted)">Add your Phase 1 routine: exercises, sets, and notes.</p>
-        </div>
+      <Card>
+        <h3 className="text-[#FF4D4D]">Phase 1 — Foundation (Dec–Feb)</h3>
+        <pre className="workout whitespace-pre-wrap text-sm mt-3 text-[#eef6fb]">{`Structure: 6 days (Push / Pull / Legs) — moderate volume, learn tempo and control.
 
-        <div class="card" style="flex:1;min-width:260px">
-          <h3>Phase 2 — Growth</h3>
-          <p style="color:var(--muted)">Add Phase 2 volume and intensity progressions.</p>
-        </div>
-      </div>
-      <div style="margin-top:12px">
-        <pre class="workout">// Paste your detailed plan here. Example:
-// MON – Push: Bench 4x6-8, Incline DB 3x8-10, OHP 3x8-10
-// TUE – Pull: Pull-ups, Rows, Curls, Face Pulls
-// ...</pre>
-      </div>
-    </section>
+MON – Push (Chest, Shoulders, Triceps)
+- Barbell Bench Press 4×6–8
+- Incline Dumbbell Press 3×8–10
+- Overhead Press 3×8–10
+- Dumbbell Lateral Raise 3×12–15
+- Triceps Pushdown 3×10–12
+- Hanging Leg Raise 3×12–15
 
-    <!-- DIET -->
-    <section id="diet" class="card" style="margin-top:18px">
-      <h2 class="page-title">Diet Plan</h2>
-      <p class="lead">Placeholder: Paste your Eggetarian winter diet or full meal plan here.</p>
+TUE – Pull (Back, Biceps)
+- Pull-ups 4×max
+- Barbell Row 3×6–8
+- Seated Cable Row 3×10–12
+- Face Pulls 3×12–15
+- Dumbbell Curls 3×10–12
+- Plank 3×60s
 
-      <div class="meals">
-        <div class="meal">
-          <h3>Breakfast</h3>
-          <ul><li>Add your morning meals — oats/eggs/paneer etc.</li></ul>
-        </div>
-        <div class="meal">
-          <h3>Lunch</h3>
-          <ul><li>Add main meal details — roti/rice + dal/paneer + veg.</li></ul>
-        </div>
-        <div class="meal">
-          <h3>Pre-Workout</h3>
-          <ul><li>Banana + peanut butter / black coffee</li></ul>
-        </div>
-        <div class="meal">
-          <h3>Post-Workout</h3>
-          <ul><li>Pea protein + creatine / quick carbs</li></ul>
-        </div>
-      </div>
-    </section>
+WED – Legs (Quads focus)
+- Back Squat 4×6–8
+- Romanian Deadlift 3×8–10
+- Leg Press 3×10–12
+- Walking Lunges 3×12 each
+- Standing Calf Raise 4×15–20
 
-    <!-- NOTES -->
-    <section id="notes" class="card" style="margin-top:18px">
-      <h2 class="page-title">Transformation Notes</h2>
-      <p class="lead">Placeholder: Add supplements, rules, tracking and recovery notes.</p>
+THU – Push (variation, slightly lighter)
+- Incline DB Press 4×8–10
+- Cable Fly 3×12–15
+- Arnold Press 3×10–12
+- Triceps Dips 3×failure
+- Core: Cable Crunch 3×15
 
-      <div class="row">
-        <div class="card" style="flex:1;min-width:260px">
-          <h3>Supplements</h3>
-          <ul style="color:var(--muted);margin:6px 0 0 18px">
-            <li>Multivitamin — with breakfast</li>
-            <li>Fish Oil — with lunch</li>
-            <li>Creatine 3–5 g — daily (post-workout)</li>
-            <li>Pea Protein — post-workout</li>
+FRI – Pull (strength focus)
+- Deadlift 4×4–6
+- Wide-Grip Lat Pulldown 3×10
+- Chest-Supported Row 3×8–10
+- Hammer Curls 3×10–12
+- Rear Delt Fly 3×12–15
+
+SAT – Legs (Hamstrings & Glutes)
+- Romanian Deadlift 4×8–10
+- Hip Thrust 4×8–10
+- Bulgarian Split Squat 3×12 each
+- Seated Calf Raise 4×15
+- Mobility & light core work
+
+SUN – Rest / Active recovery
+`}</pre>
+      </Card>
+
+      <Card>
+        <h3 className="text-[#FF4D4D]">Phase 2 — Growth & Volume (Mar–May)</h3>
+        <pre className="workout whitespace-pre-wrap text-sm mt-3 text-[#eef6fb']">{`Structure: Increase weekly volume & intensity. Add 1–2 intensity techniques (drop sets, short-rest supersets).
+- Train same split but slightly higher reps (8–12) and occasional supersets.
+- Add 10–20% calories (clean surplus) and keep protein high.
+- Continue creatine + EAA; track weekly measurements.`}</pre>
+      </Card>
+
+      <Card>
+        <h3 className="text-[#FF4D4D]">Phase 3 — Definition & Refinement (Jun–Aug)</h3>
+        <pre className="workout whitespace-pre-wrap text-sm mt-3 text-[#eef6fb]">{`Structure: Preserve muscle, reduce body fat, increase conditioning.
+- Slight calorie reduction, add 2 cardio sessions/week (15–25 min incline walk / HIIT).
+- Keep strength training 4–5x/week, focus on time under tension and posture.
+- Maintain protein, prioritize sleep & recovery.`}</pre>
+      </Card>
+    </div>
+  );
+}
+
+function Diet() {
+  return (
+    <div className="ml-0 md:ml-72">
+      <Card>
+        <h2 className="text-2xl font-bold">Winter Lean Muscle Diet — Eggetarian</h2>
+        <p className="text-[#bdbdbd] mt-2">Clean, warm meals suitable for the winter months — keep protein high and include good fats for joint & skin health.</p>
+      </Card>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card>
+          <h3 className="text-[#FF4D4D]">Daily Meal Structure</h3>
+          <ul className="list-disc list-inside mt-3 text-[#bdbdbd]">
+            <li>Morning: Warm water + lemon + 5 soaked almonds + 1 walnut</li>
+            <li>Breakfast: Oats 50 g + 1 banana + 1 tbsp peanut butter + 1 scoop pea protein (warm milk)</li>
+            <li>Midday snack: 2 boiled eggs or roasted chana</li>
+            <li>Lunch: 2 rotis + rice + dal/rajma/chole + paneer/tofu + veggies + 1 tsp ghee</li>
+            <li>Pre-workout: Banana + peanut butter + optional black coffee (30–45 min before)</li>
+            <li>Post-workout: Pea protein + 3–5 g creatine + quick carbs (banana / brown bread)</li>
+            <li>Dinner: Rotis + paneer/tofu/dal + cooked vegetables; warm milk optional before bed</li>
           </ul>
-        </div>
-        <div class="card" style="flex:1;min-width:260px">
-          <h3>Tracking</h3>
-          <ul style="color:var(--muted);margin:6px 0 0 18px">
-            <li>Photos every 2 weeks</li>
-            <li>Record lifts & measurements monthly</li>
+        </Card>
+
+        <Card>
+          <h3 className="text-[#FF4D4D]">Supplements & Notes</h3>
+          <ul className="list-disc list-inside mt-3 text-[#bdbdbd]">
+            <li>Multivitamin: with breakfast (HK Vitals)</li>
+            <li>Fish Oil: with lunch (HK Vitals)</li>
+            <li>Creatine: 3–5 g daily – mix with post-workout shake</li>
+            <li>Pea Protein: post-workout and as needed to hit protein target</li>
+            <li>EAA: intra-workout or pre-workout as needed</li>
+            <li>Hydration: 3–3.5 L/day; Sleep 7–8 hrs</li>
           </ul>
-        </div>
+        </Card>
       </div>
-    </section>
 
-    <!-- MUSIC -->
-    <section id="music" class="card" style="margin-top:18px">
-      <h2 class="page-title">Music</h2>
+      <Card>
+        <h3 className="text-[#FF4D4D]">Weekend Meal Prep Tips</h3>
+        <ol className="list-decimal list-inside mt-3 text-[#bdbdbd]">
+          <li>Boil 6–8 eggs and store for 3–4 days.</li>
+          <li>Cook dal/rajma/chole in bulk and refrigerate.</li>
+          <li>Cut paneer/tofu into cubes and store ready-to-use.</li>
+          <li>Roast peanuts/chana for snacks.</li>
+        </ol>
+      </Card>
+    </div>
+  );
+}
 
-      <div class="card music-player">
-        <div style="display:flex; gap:18px; align-items:center; flex-wrap:wrap; width:100%">
-          <div class="player-controls">
-            <div style="display:flex; gap:8px; align-items:center;">
-              <button class="btn" id="playBtn" onclick="togglePlay()">▶ Play / Pause</button>
-              <button class="btn small" onclick="prevTrack()">⏮ Prev</button>
-              <button class="btn small" onclick="nextTrack()">⏭ Next</button>
+function Notes() {
+  return (
+    <div className="ml-0 md:ml-72">
+      <Card>
+        <h2 className="text-2xl font-bold">Transformation Notes</h2>
+        <p className="text-[#bdbdbd] mt-2">Key rules, tracking and mindset for your 6–9 month transformation.</p>
+      </Card>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card>
+          <h3 className="text-[#FF4D4D]">Key Rules</h3>
+          <ul className="list-disc list-inside mt-3 text-[#bdbdbd]">
+            <li>Discipline > Motivation — follow plan consistently.</li>
+            <li>Track photos every 2 weeks and measurements monthly.</li>
+            <li>Aim for 1.6–2 g protein/kg/day.</li>
+            <li>Limit junk food — 90% clean, 1 cheat meal/week.</li>
+          </ul>
+        </Card>
+
+        <Card>
+          <h3 className="text-[#FF4D4D]">Recovery & Mindset</h3>
+          <ul className="list-disc list-inside mt-3 text-[#bdbdbd]">
+            <li>Sleep 7–8 hours nightly; deep sleep helps growth.</li>
+            <li>Hydrate 3–3.5 L/day even during winter.</li>
+            <li>Deload every 6–8 weeks if feeling overtrained.</li>
+            <li>Small weekly gains compound into big results over months.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function Music() {
+  // audio player logic similar to previous working JS
+  const audioRef = useRef(null);
+  const [current, setCurrent] = useState(0);
+  const [playing, setPlaying] = useState(false);
+
+  // Put your local mp3 file names here (must be in /public or served alongside app)
+  const tracks = [
+    'badmashi.mp3',
+    'jaatflow.mp3',
+    'neffex_go.mp3',
+    'iguess.mp3',
+    'phonks.mp3'
+  ];
+  const titles = ['Badmashi','Jaat Flow','Neffex Go','I Guess','Phonks'];
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    const handleEnded = () => nextTrack();
+    audio && audio.addEventListener('ended', handleEnded);
+    return () => audio && audio.removeEventListener('ended', handleEnded);
+  }, [current]);
+
+  function loadTrack(i){
+    if(i < 0) i = tracks.length - 1;
+    if(i >= tracks.length) i = 0;
+    setCurrent(i);
+    if(audioRef.current){
+      audioRef.current.src = tracks[i];
+      audioRef.current.load();
+    }
+  }
+  function togglePlay(){
+    if(!audioRef.current.src) loadTrack(current);
+    if(audioRef.current.paused){
+      audioRef.current.play().then(()=>{ setPlaying(true); }).catch(()=>{ /* play blocked */ });
+    } else {
+      audioRef.current.pause(); setPlaying(false);
+    }
+  }
+  function nextTrack(){ loadTrack(current+1); setTimeout(()=>{ audioRef.current.play().then(()=>setPlaying(true)).catch(()=>{}); }, 120); }
+  function prevTrack(){ loadTrack(current-1); setTimeout(()=>{ audioRef.current.play().then(()=>setPlaying(true)).catch(()=>{}); }, 120); }
+  function selectTrack(i){ loadTrack(i); setTimeout(()=>{ audioRef.current.play().then(()=>setPlaying(true)).catch(()=>{}); }, 120); }
+
+  useEffect(()=>{ // update document title lightly
+    document.title = `Sylarx | Baki Mode${playing ? ' — Playing '+titles[current] : ''}`;
+  }, [playing, current]);
+
+  return (
+    <div className="ml-0 md:ml-72">
+      <Card>
+        <h2 className="text-2xl font-bold">Music Player</h2>
+        <p className="text-[#bdbdbd] mt-2">Click Play to start. Place your mp3 files in the public folder or alongside your built files, and edit the tracks[] list above if filenames differ.</p>
+      </Card>
+
+      <Card>
+        <div className="flex flex-col md:flex-row gap-6 items-start">
+          <div className="player-controls flex-1">
+            <div className="flex gap-3 items-center">
+              <button onClick={togglePlay} className="btn">{playing ? '❚❚ Pause' : '▶ Play'}</button>
+              <button onClick={prevTrack} className="btn small">⏮ Prev</button>
+              <button onClick={nextTrack} className="btn small">⏭ Next</button>
             </div>
-            <div class="player-status" id="playerStatus">Click Play to start (no autoplay)</div>
-            <audio id="audio" preload="auto" style="margin-top:10px"></audio>
+            <div className="player-status text-[#bdbdbd] mt-3">{playing ? 'Playing: '+titles[current] : 'Loaded: '+titles[current]}</div>
+            <audio ref={audioRef} preload="auto" className="mt-4" />
           </div>
 
-          <div class="playlist" id="playlist">
-            <div style="font-weight:800;color:var(--accent);margin-bottom:8px">Playlist</div>
-            <div id="tracksList" style="display:flex;flex-direction:column;gap:8px">
-              <!-- Edit names below or change file names in script -->
-              <div id="t0" class="track" onclick="selectTrack(0)">1 — Badmashi</div>
-              <div id="t1" class="track" onclick="selectTrack(1)">2 — Jaat Flow</div>
-              <div id="t2" class="track" onclick="selectTrack(2)">3 — Neffex Go</div>
-              <div id="t3" class="track" onclick="selectTrack(3)">4 — I Guess</div>
-              <div id="t4" class="track" onclick="selectTrack(4)">5 — Phonks</div>
+          <div className="playlist w-full md:w-80">
+            <div className="font-semibold text-[#FF4D4D] mb-3">Playlist</div>
+            <div className="flex flex-col gap-2">
+              {titles.map((t, i) => (
+                <div key={i} onClick={()=>selectTrack(i)} className={`track ${current===i && playing ? 'playing' : ''}`}>{i+1} — {t}</div>
+              ))}
             </div>
           </div>
         </div>
-
-        <div style="margin-top:12px;color:var(--muted);font-size:13px">
-          Note: Put your local .mp3 files in the same folder as this HTML. Edit track file names inside the script if needed.
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <script>
-    /* Smooth active nav highlighting + scrolling */
-    function scrollToId(id, btn){
-      document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-      if(btn) btn.classList.add('active');
-      document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
-    }
-
-    /* --- MUSIC PLAYER LOGIC --- */
-    const audio = document.getElementById('audio');
-    const status = document.getElementById('playerStatus');
-    const ringPulse = document.getElementById('ringPulse');
-    const ringIdle = document.getElementById('ringIdle');
-
-    // Local track files (put the .mp3 files in same folder)
-    // Change the filenames below to match your files
-    const tracks = [
-      'badmashi.mp3',
-      'jaatflow.mp3',
-      'neffex_go.mp3',
-      'iguess.mp3',
-      'phonks.mp3'
-    ];
-    // Optional: readable titles shown in playlist (order must match tracks[])
-    const titles = [
-      'Badmashi',
-      'Jaat Flow',
-      'Neffex Go',
-      'I Guess',
-      'Phonks'
-    ];
-
-    let current = 0;
-    function loadTrack(i){
-      if(i < 0) i = tracks.length - 1;
-      if(i >= tracks.length) i = 0;
-      current = i;
-      audio.src = tracks[current];
-      audio.load();
-      updateUI();
-      status.textContent = 'Loaded: ' + titles[current];
-    }
-
-    function togglePlay(){
-      if(!audio.src) loadTrack(current);
-      if(audio.paused){
-        audio.play().then(()=> {
-          status.textContent = 'Playing: ' + titles[current];
-          startPulse();
-        }).catch(err => {
-          status.textContent = 'Play blocked by browser — click anywhere then press Play';
-        });
-      } else {
-        audio.pause();
-        status.textContent = 'Paused';
-        stopPulse();
-      }
-    }
-
-    function nextTrack(){
-      loadTrack(current + 1);
-      audio.play().then(()=> {
-        status.textContent = 'Playing: ' + titles[current];
-        startPulse();
-      }).catch(()=>{ status.textContent = 'Play blocked — press Play'; });
-    }
-
-    function prevTrack(){
-      loadTrack(current - 1);
-      audio.play().then(()=> {
-        status.textContent = 'Playing: ' + titles[current];
-        startPulse();
-      }).catch(()=>{ status.textContent = 'Play blocked — press Play'; });
-    }
-
-    function selectTrack(i){
-      loadTrack(i);
-      audio.play().then(()=> {
-        status.textContent = 'Playing: ' + titles[current];
-        startPulse();
-      }).catch(()=>{ status.textContent = 'Play blocked — press Play'; });
-    }
-
-    function updateUI(){
-      // highlight playlist items
-      document.querySelectorAll('.track').forEach((el, idx) => {
-        el.classList.toggle('playing', idx === current);
-      });
-    }
-
-    function startPulse(){
-      ringPulse.style.display = 'block';
-      ringIdle.style.display = 'none';
-      document.querySelectorAll('.track').forEach((el, idx) => {
-        el.style.opacity = idx === current ? '1' : '0.8';
-      });
-    }
-
-    function stopPulse(){
-      ringPulse.style.display = 'none';
-      ringIdle.style.display = 'block';
-    }
-
-    // Auto-next when track ends
-    audio.addEventListener('ended', ()=>{ nextTrack(); });
-
-    // Preload first track visual
-    loadTrack(0);
-
-    // Mobile tip: enable play after first user interaction if browser blocks
-    document.body.addEventListener('click', ()=> {
-      // no-op; keeps browser interaction registered for autoplay policies
-    }, {once:true});
-  </script>
-</body>
-</html>
+      </Card>
+    </div>
+  );
+}
